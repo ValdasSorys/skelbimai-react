@@ -1,58 +1,111 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+
 //import App from './App';
-import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.css';
+import './index.css';
+//import * as constants from './constants'
 
-/*class EssayForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: 'Please write an essay about your favorite DOM element.'
-    };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleChange(event) {
-    this.setState({value: event.target.value});
-  }
-
-  handleSubmit(event) {
-    alert('An essay was submitted: ' + this.state.value);
-    event.preventDefault();
-  }
-
-  render() {
+class App extends React.Component {
+  render()
+  {
     return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Essay:
-          <textarea value={this.state.value} onChange={this.handleChange} />
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
+      <Router>
+        <div>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
+            <li>
+              <Link to="/topics">Topics</Link>
+            </li>
+          </ul>
+
+          <Switch>
+            <Route path="/about" component={About} >
+            </Route>
+            <Route path="/topics" component={(props) => (<Topics {...props}/>)}>
+            </Route>
+            <Route path="/" component={Home}>
+            </Route>
+          </Switch>
+        </div>
+      </Router>
     );
   }
-}*/
+}
+
+class Home extends React.Component {
+  render()
+  {
+    return <h2>Home</h2>;
+  }
+}
+
+class About extends React.Component {
+  render()
+  {
+    return <h2>About</h2>;
+  }
+}
+
+class Topics extends React.Component {
+  render()
+  {
+    let match = this.props.match;
+
+    return (
+      <div>
+        <h2>Topics</h2>
+
+        <ul>
+          <li>
+            <Link to={`${match.url}/components`}>Components</Link>
+          </li>
+          <li>
+            <Link to={`${match.url}/props-v-state`}>
+              Props v. State
+            </Link>
+          </li>
+        </ul>
+
+        {/* The Topics page has its own <Switch> with more routes
+            that build on the /topics URL path. You can think of the
+            2nd <Route> here as an "index" page for all topics, or
+            the page that is shown when no topic is selected */}
+        <Switch>
+          <Route path={`${match.path}/:topicId`} component={(props) => (<Topic {...props}/>)}>
+          </Route>
+          <Route path={match.path}>
+            <h3>Please select a topic.</h3>
+          </Route>
+        </Switch>
+      </div>
+    );
+  }
+}
+
+class Topic extends React.Component {
+  render()
+  {
+    let topicId = this.props.match.params.topicId;
+    return <h3>Requested topic ID: {topicId}</h3>;
+  }
+  
+}
 
 ReactDOM.render(
-  <iframe title= "Waaave" width={window.innerWidth} height={window.innerHeight} src="https://www.youtube.com/embed/Tav8pVgk3Dk?autoplay=1">
-</iframe>
-  ,document.getElementById('root')
-)
-
-
-/*ReactDOM.render(
-  <React.StrictMode>
+  <Router>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);*/
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+  </Router>,
+  document.getElementById("root")
+);
