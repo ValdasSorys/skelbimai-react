@@ -7,26 +7,33 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
-import isLoggedIn from './auth'
+import {loginContext, isLoggedIn, login, logout} from './auth'
 import NotFound from './404'
-//import App from './App';
+import {App2} from './App';
 import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 //import * as constants from './constants'
 
 class App extends React.Component {
+  constructor(props)
+  {
+    super(props);
+    this.state = {update: this.update};
+  }
   render()
   {
     return (
       <Router>
           <Switch>
-            <Route path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." {...props}/>)} >
+            <Route exact path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." {...props}/>)} >
             </Route>            
-            <Route path="/about" component={(props) => (<About  {...props}/>)} >
+            <Route exact path="/about" component={(props) => (<About  {...props}/>)} >
             </Route>
             <Route path="/topics" component={(props) => (<Topics {...props}/>)}>
             </Route>
             <Route exact path="/" component={(props) => (<Home {...props}/>)}>
+            </Route>
+            <Route exact path="/logout" component={(props) => (<Logout {...props}/>)}>
             </Route>
 			      <Route path="/">
             <Redirect to="/404" />
@@ -44,6 +51,8 @@ class LinksLol extends React.Component {
     {
       return (
         <div>
+          username: {loginContext.user}<br></br>
+          id: {loginContext.id}<br></br>
           <ul>
             <li>
               <Link to="/">Home</Link>
@@ -56,6 +65,9 @@ class LinksLol extends React.Component {
             </li>
             <li>
               <Link to="/top">404</Link>
+            </li>
+            <li>
+              <Link to="/logout">Logout</Link>
             </li>
           </ul>
           </div>
@@ -81,32 +93,66 @@ class LinksLol extends React.Component {
     }
   }
 }
+class TestFooter extends React.Component {
+  render()
+  {
+    return(
+      <footer id="sticky-footer" class="py-4 bg-dark text-white-50">
+    <div class="container text-center">
+      <small>Copyright &copy; Your Website</small>
+    </div>
+  </footer>
+    );
+  }
+}
 class Home extends React.Component {
   constructor(props)
   {
     super(props);
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
-    this.state = ({isLoggedIn : isLoggedIn()});
+    this.state = ({isLoggedIn : isLoggedIn(), username: "", id: "", redirect: null});
+    this.handleInputChange = this.handleInputChange.bind(this);
   }
-  login()
+  login(event)
   {
-    window.sessionStorage.setItem("token", "1");
-    this.setState(state => ({isLoggedIn: true}));
+    login(this.state.username, this.state.id);
+    this.setState(state => ({isLoggedIn: isLoggedIn(), redirect: "/"}));
   }
   logout()
   {
-    window.sessionStorage.removeItem("token");
-    this.setState(sate => ({isLoggedIn: false}));
+    this.setState({redirect: "/logout"});
+  }
+  handleInputChange(event) {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    });
   }
   render()
   {
+    if (this.state.redirect) {
+      let redirect = this.state.redirect;
+      this.setState({redirect: null});
+      return <Redirect to={redirect} />
+    }
     let button;
     if (!this.state.isLoggedIn)
     {
-        button = <button onClick={this.login}>
-                Login
-                </button>
+      button = <form onSubmit={this.login}>
+                  <label>
+                    Name:
+                    <input name="username" type="text" required="required" maxlength="20" value={this.state.username} onChange={this.handleInputChange} />
+                  </label><br></br>
+                  <label>
+                    Id:
+                    <input name="id" type="number" min="1" step="1" required="required" value={this.state.id} onChange={this.handleInputChange} />
+                  </label><br></br>
+                  <input type="submit" value="Login" /><br></br>
+                </form>
     }
     else
     {
@@ -119,6 +165,7 @@ class Home extends React.Component {
       <LinksLol/>
       <h2>Home</h2>
       {button}
+      <TestFooter/>
       </div>
     );
   }
@@ -131,6 +178,8 @@ class About extends React.Component {
       <div>
       <LinksLol/>
       <h2>About</h2>
+      <App2/>
+      <TestFooter/>
       </div>
     );
   }
@@ -163,13 +212,17 @@ class Topics extends React.Component {
             2nd <Route> here as an "index" page for all topics, or
             the page that is shown when no topic is selected */}
         <Switch>
-          <Route path={`${match.path}/:topicId`} component={(props) => (<Topic {...props}/>)}>
+          <Route exact path={`${match.path}/:topicId`} component={(props) => (<Topic {...props}/>)}>
           </Route>
-          <Route path={match.path}>
+          <Route exact path="/topics">
             <h3>Please select a topic.</h3>
           </Route>
+          <Route path="/">
+            <Redirect to="/404" />
+            </Route>
         </Switch>
       </div>
+      <TestFooter/>
       </div>
     );
   }
@@ -182,6 +235,14 @@ class Topic extends React.Component {
     return <h3>Requested topic ID: {topicId}</h3>;
   }
   
+}
+
+class Logout extends React.Component {
+  render()
+  {
+    logout();
+    return <Redirect to="/"></Redirect>
+  }
 }
 
 ReactDOM.render(

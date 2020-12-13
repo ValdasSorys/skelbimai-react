@@ -1,10 +1,15 @@
-import logo from './logo.svg';
 import './App.css';
+import React from 'react';
+import {loginContext} from './auth'
 
-function App() {
-  return (
-    <h1>Hello, world!</h1>
-  );
+export class App2 extends React.Component {
+  render()
+  {
+    return (
+      <div>
+      <h1>{loginContext.user}</h1>
+      <h1>{loginContext.id}</h1>
+      </div>
+    );
+  }
 }
-
-export default App;
