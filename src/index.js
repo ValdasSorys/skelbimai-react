@@ -5,7 +5,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.css';
 
-class EssayForm extends React.Component {
+/*class EssayForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,7 +36,7 @@ class EssayForm extends React.Component {
       </form>
     );
   }
-}
+}*/
 
 ReactDOM.render(
   <iframe title= "Waaave" width={window.innerWidth} height={window.innerHeight} src="https://www.youtube.com/embed/Tav8pVgk3Dk?autoplay=1">
