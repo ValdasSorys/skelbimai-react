@@ -7,7 +7,7 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
-
+import isLoggedIn from './auth'
 import NotFound from './404'
 //import App from './App';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -22,11 +22,11 @@ class App extends React.Component {
           <Switch>
             <Route path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." {...props}/>)} >
             </Route>            
-            <Route path="/about" component={About} >
+            <Route path="/about" component={(props) => (<About  {...props}/>)} >
             </Route>
             <Route path="/topics" component={(props) => (<Topics {...props}/>)}>
             </Route>
-            <Route exact path="/" component={Home}>
+            <Route exact path="/" component={(props) => (<Home {...props}/>)}>
             </Route>
 			      <Route path="/">
             <Redirect to="/404" />
@@ -40,33 +40,85 @@ class App extends React.Component {
 class LinksLol extends React.Component {
   render()
   {
-    return (
-      <div>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/about">About</Link>
-          </li>
-          <li>
-            <Link to="/topics">Topics</Link>
-          </li>
-          <li>
-            <Link to="/top">404</Link>
-          </li>
-        </ul>
-        </div>
-    )
+    if (isLoggedIn())
+    {
+      return (
+        <div>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
+            <li>
+              <Link to="/topics">Topics</Link>
+            </li>
+            <li>
+              <Link to="/top">404</Link>
+            </li>
+          </ul>
+          </div>
+      )
+    }
+    else
+    {
+      return (
+        <div>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
+            <li>
+              <Link to="/topics">Topics</Link>
+            </li>
+          </ul>
+          </div>
+      )
+    }
   }
 }
 class Home extends React.Component {
+  constructor(props)
+  {
+    super(props);
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
+    this.state = ({isLoggedIn : isLoggedIn()});
+  }
+  login()
+  {
+    window.sessionStorage.setItem("token", "1");
+    this.setState(state => ({isLoggedIn: true}));
+  }
+  logout()
+  {
+    window.sessionStorage.removeItem("token");
+    this.setState(sate => ({isLoggedIn: false}));
+  }
   render()
   {
+    let button;
+    if (!this.state.isLoggedIn)
+    {
+        button = <button onClick={this.login}>
+                Login
+                </button>
+    }
+    else
+    {
+        button = <button onClick={this.logout}>
+                Logout
+                </button>
+    }
     return (
       <div>
       <LinksLol/>
       <h2>Home</h2>
+      {button}
       </div>
     );
   }
