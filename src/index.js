@@ -4,9 +4,11 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  Redirect
 } from "react-router-dom";
 
+import NotFound from './404'
 //import App from './App';
 import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
@@ -17,44 +19,68 @@ class App extends React.Component {
   {
     return (
       <Router>
-        <div>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/about">About</Link>
-            </li>
-            <li>
-              <Link to="/topics">Topics</Link>
-            </li>
-          </ul>
-
           <Switch>
+            <Route path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." {...props}/>)} >
+            </Route>            
             <Route path="/about" component={About} >
             </Route>
             <Route path="/topics" component={(props) => (<Topics {...props}/>)}>
             </Route>
-            <Route path="/" component={Home}>
+            <Route exact path="/" component={Home}>
+            </Route>
+			      <Route path="/">
+            <Redirect to="/404" />
             </Route>
           </Switch>
-        </div>
       </Router>
     );
   }
 }
 
+class LinksLol extends React.Component {
+  render()
+  {
+    return (
+      <div>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/about">About</Link>
+          </li>
+          <li>
+            <Link to="/topics">Topics</Link>
+          </li>
+          <li>
+            <Link to="/top">404</Link>
+          </li>
+        </ul>
+        </div>
+    )
+  }
+}
 class Home extends React.Component {
   render()
   {
-    return <h2>Home</h2>;
+    return (
+      <div>
+      <LinksLol/>
+      <h2>Home</h2>
+      </div>
+    );
   }
 }
 
 class About extends React.Component {
   render()
   {
-    return <h2>About</h2>;
+    return (
+      <div>
+      <LinksLol/>
+      <h2>About</h2>
+      </div>
+    );
   }
 }
 
@@ -64,6 +90,8 @@ class Topics extends React.Component {
     let match = this.props.match;
 
     return (
+      <div>
+      <LinksLol/>
       <div>
         <h2>Topics</h2>
 
@@ -89,6 +117,7 @@ class Topics extends React.Component {
             <h3>Please select a topic.</h3>
           </Route>
         </Switch>
+      </div>
       </div>
     );
   }
