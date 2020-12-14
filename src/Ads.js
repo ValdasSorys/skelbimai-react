@@ -35,29 +35,80 @@ export class Ads extends React.Component
             <table className="entryElement">
             <tr>
                     <td className="entryFirst">
-                    First<br></br>
-                    Second
+                    <div className="wrapper">
+                    <div style={{"font-size": "12px"}}>Savininkas:<br></br>valdas123</div>
+                    <div></div>
+                    <div style={{"font-size": "12px", "margin-top": "5px"}}>2020-12-12</div>
+                    </div>
                     </td>
+                    
                     <td className="entrySecond">
-                    LastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLast
+                    <div className="wrapper">
+                    <div style={{"color": "#0275d8", "font-weight": "550"}}>
+                        Opel Astra
+                    </div>
+                    <div className="entryDetails">
+                        Labai geras ir puikus automobilis. Labai geras ir puikus automobilis. Labai geras ir puikus automobilis. 
+                    </div>
+                    <div style={{"margin-top": "-20px"}}>
+                        1250$
+                        <div style={{"color": "gray", "font-size": "15px"}}>
+                            Kategorija: Automobilis
+                        </div>
+                    </div>
+                    </div>
                     </td>
             </tr>
             <tr>
                     <td className="entryFirst">
-                    First<br></br>
-                    Second
+                    <div className="wrapper">
+                    <div style={{"font-size": "12px"}}>Savininkas:<br></br>valdas123</div>
+                    <div></div>
+                    <div style={{"font-size": "12px", "margin-top": "5px"}}>2020-12-12</div>
+                    </div>
                     </td>
+                    
                     <td className="entrySecond">
-                    LastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLast
+                    <div className="wrapper">
+                    <div style={{"color": "#0275d8", "font-weight": "550"}}>
+                        Opel Astra
+                    </div>
+                    <div className="entryDetails">
+                        Labai geras ir puikus automobilis. Labai geras ir puikus automobilis. Labai geras ir puikus automobilis. 
+                    </div>
+                    <div style={{"margin-top": "-20px"}}>
+                        1250$
+                        <div style={{"color": "gray", "font-size": "15px"}}>
+                            Kategorija: Automobilis
+                        </div>
+                    </div>
+                    </div>
                     </td>
             </tr>
             <tr>
                     <td className="entryFirst">
-                    First<br></br>
-                    Second
+                    <div className="wrapper">
+                    <div style={{"font-size": "12px"}}>Savininkas:<br></br>valdas123</div>
+                    <div></div>
+                    <div style={{"font-size": "12px", "margin-top": "5px"}}>2020-12-12</div>
+                    </div>
                     </td>
+                    
                     <td className="entrySecond">
-                    LastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLast
+                    <div className="wrapper">
+                    <div style={{"color": "#0275d8", "font-weight": "550"}}>
+                        Opel Astra
+                    </div>
+                    <div className="entryDetails">
+                        Labai geras ir puikus automobilis. Labai geras ir puikus automobilis. Labai geras ir puikus automobilis. 
+                    </div>
+                    <div style={{"margin-top": "-20px"}}>
+                        1250$
+                        <div style={{"color": "gray", "font-size": "15px"}}>
+                            Kategorija: Automobilis
+                        </div>
+                    </div>
+                    </div>
                     </td>
             </tr>
         </table>
