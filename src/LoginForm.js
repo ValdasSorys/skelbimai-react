@@ -82,7 +82,7 @@ export class LoginForm extends React.Component {
                       Prisijungti
                     </Button>
                   </Form>*/
-                  <div className="auth-wrapper">
+                  <div className="animated-login auth-wrapper">
                     <div className="auth-inner">
                     <Form onSubmit={this.login}>
                     <Form.Group controlId="formBasicEmail">

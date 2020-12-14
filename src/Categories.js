@@ -7,20 +7,42 @@ import {
 } from "react-router-dom";
 
 export class Categories extends React.Component {
+  constructor(props)
+  {
+    super(props);
+    this.state = {loaded: false};
+  }
+  componentDidMount() {
+    setTimeout(function() { //Start the timer
+        this.setState({loaded: true}) //After 1 second, set render to true
+    }.bind(this), 2000)
+  }
   render()
   {
-    let match = this.props.match;        
+    let match = this.props.match;   
+    let categories = ""; 
+    if (this.state.loaded)
+    {
+      categories = 
+      <div>
+      <h1>Kategorijos</h1>
+      <Category id = {1} detailed = {false}/>
+      <Category id = {2} detailed = {false}/>
+      <Category id = {3} detailed = {false}/>
+      <Category id = {4} detailed = {false}/>
+      </div>
+    }
+    else
+    {
+      categories = <div id="loader"></div>
+    } 
     return (      
       <div>
       <Switch>
           <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<Category detailed = {true} {...props}/>)}>
           </Route>
           <Route exact path="/categories">
-            <h1>Kategorijos</h1>
-            <Category id = {1} detailed = {false}/>
-            <Category id = {2} detailed = {false}/>
-            <Category id = {3} detailed = {false}/>
-            <Category id = {4} detailed = {false}/>
+            {categories}            
           </Route>
           <Route path="/">
             <Redirect to="/404" />

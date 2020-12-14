@@ -163,13 +163,14 @@ class App extends React.Component {
     }
     return (
       
-      <div>      
+      <div>
+      <article>    
       <Router>
           {header}
           {routerElement}
           {footer}
       </Router>
-      
+      </article> 
       </div>
     );
   }
@@ -210,30 +211,31 @@ class Header extends React.Component {
     {
       navbarLeft = 
       <Nav className="mr-auto" activeKey={this.state.activeKey}>
-          <Nav.Link eventKey = "/" as = {Link} to="/">Pagrindinis puslapis</Nav.Link>
-          <Nav.Link eventKey = "/ads" as = {Link} to="/ads">Skelbimai</Nav.Link>     
+          <Nav.Link onClick = {() => this.setActiveKey("/")} eventKey = "/" as = {Link} to="/">Pagrindinis puslapis</Nav.Link>
+          <Nav.Link onClick = {() => this.setActiveKey("/ads")} eventKey = "/ads" as = {Link} to="/ads">Skelbimai</Nav.Link>     
           </Nav>
       navbarRight = 
       <Nav activeKey={this.state.activeKey}>
           <Navbar.Text><i>Prisijungęs: {loginContext.user}</i></Navbar.Text>
-          <Nav.Link eventKey = "/user" as = {Link} to={"/user/"+loginContext.id}>Profilis</Nav.Link>
-          <Nav.Link eventKey = "/logout" as = {Link} to="/logout">Atsijungti</Nav.Link>
+          <Nav.Link onClick = {() => this.setActiveKey("/user")}  eventKey = "/user" as = {Link} to={"/user/"+loginContext.id}>Profilis</Nav.Link>
+          <Nav.Link onClick = {() => this.setActiveKey("/logout")} eventKey = "/logout" as = {Link} to="/logout">Atsijungti</Nav.Link>
           </Nav>
     }
     else
     {
       navbarLeft = 
               <Nav className="mr-auto" activeKey={this.state.activeKey}>
-              <Nav.Link eventKey = "/" as = {Link} to="/">Pagrindinis puslapis</Nav.Link>
-              <Nav.Link eventKey = "/ads" as = {Link} to="/ads">Skelbimai</Nav.Link>
+              <Nav.Link onClick = {() => this.setActiveKey("/")} eventKey = "/" as = {Link} to="/">Pagrindinis puslapis</Nav.Link>
+              <Nav.Link onClick = {() => this.setActiveKey("/ads")} eventKey = "/ads" as = {Link} to="/ads">Skelbimai</Nav.Link>
               </Nav>
       navbarRight = 
               <Nav activeKey={this.state.activeKey}>
-              <Nav.Link eventKey = "/login" as = {Link} to="/login">Prisijungti</Nav.Link>
+              <Nav.Link onClick = {() => this.setActiveKey("/login")} eventKey = "/login" as = {Link} to="/login">Prisijungti</Nav.Link>
               </Nav>
     }
     return(
-      <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
+      <header>
+      <Navbar sticky="top" collapseOnSelect expand="lg" bg="primary" variant="dark">
       <Navbar.Brand>Skelbimų portalas</Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
@@ -241,6 +243,7 @@ class Header extends React.Component {
       {navbarRight}
       </Navbar.Collapse>
       </Navbar>
+      </header>
     );
   }
 }
@@ -249,10 +252,10 @@ class Footer extends React.Component {
   {
     return(
       <footer className="bottom-footer py-4 bg-primary text-white-50">
-    <div className="container text-center align-middle">
+      <div className="container text-center align-middle">
       <small>Copyright &copy; Your Website</small>
-    </div>
-  </footer>
+      </div>
+      </footer>
     );
   }
 }
