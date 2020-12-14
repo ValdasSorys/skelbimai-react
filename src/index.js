@@ -5,8 +5,7 @@ import {
   Switch,
   Route,
   Link,
-  Redirect,
-  withRouter
+  Redirect
 } from "react-router-dom";
 import {loginContext, isLoggedIn, Login, Logout, Register} from './auth'
 import {Ads} from './Ads'
