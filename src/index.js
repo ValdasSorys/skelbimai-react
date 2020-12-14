@@ -201,7 +201,7 @@ class Header extends React.Component {
               <Nav.Link onClick = {() => this.setActiveKey("/userslist")} eventKey = "/userslist" as = {Link} to="/userslist">Vartotojų sąrašas</Nav.Link>
               </Nav>
             navbarRight = 
-            <Nav activeKey={this.state.activeKey}>
+            <Nav className="ml-auto" activeKey={this.state.activeKey}>
               <Navbar.Text><i>Prisijungęs: {loginContext.user}</i></Navbar.Text>
               <Nav.Link onClick = {() => this.setActiveKey("/user")} eventKey = "/user" as = {Link} to={"/user/"+loginContext.id}>Profilis</Nav.Link>
               <Nav.Link onClick = {() => this.setActiveKey("/logout")} eventKey = "/logout" as = {Link} to="/logout">Atsijungti</Nav.Link>
@@ -215,7 +215,7 @@ class Header extends React.Component {
           <Nav.Link onClick = {() => this.setActiveKey("/ads")} eventKey = "/ads" as = {Link} to="/ads">Skelbimai</Nav.Link>     
           </Nav>
       navbarRight = 
-      <Nav activeKey={this.state.activeKey}>
+      <Nav className="ml-auto" activeKey={this.state.activeKey}>
           <Navbar.Text><i>Prisijungęs: {loginContext.user}</i></Navbar.Text>
           <Nav.Link onClick = {() => this.setActiveKey("/user")}  eventKey = "/user" as = {Link} to={"/user/"+loginContext.id}>Profilis</Nav.Link>
           <Nav.Link onClick = {() => this.setActiveKey("/logout")} eventKey = "/logout" as = {Link} to="/logout">Atsijungti</Nav.Link>
@@ -229,14 +229,14 @@ class Header extends React.Component {
               <Nav.Link onClick = {() => this.setActiveKey("/ads")} eventKey = "/ads" as = {Link} to="/ads">Skelbimai</Nav.Link>
               </Nav>
       navbarRight = 
-              <Nav activeKey={this.state.activeKey}>
+              <Nav className="ml-auto" activeKey={this.state.activeKey}>
               <Nav.Link onClick = {() => this.setActiveKey("/login")} eventKey = "/login" as = {Link} to="/login">Prisijungti</Nav.Link>
               </Nav>
     }
     return(
       <header>
       <Navbar sticky="top" collapseOnSelect expand="lg" bg="primary" variant="dark">
-      <Navbar.Brand>Skelbimų portalas</Navbar.Brand>
+      <Navbar.Brand>Skelbimai</Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
       {navbarLeft}
