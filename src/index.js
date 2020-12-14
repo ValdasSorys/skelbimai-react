@@ -23,8 +23,6 @@ import './index.css';
 import { RegistrationForm } from './RegistrationForm';
 //import * as constants from './constants'
 
-const component = withRouter(props => <App {...props}/>);
-
 class App extends React.Component {
   constructor(props)
   {
