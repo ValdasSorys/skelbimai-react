@@ -12,7 +12,7 @@ class NotAuthorized extends React.Component
     constructor(props)
     {
         super(props);
-        this.props.updateParent();
+        this.props.hideHF();
     }
     render()
     {
@@ -39,7 +39,7 @@ class NotAuthorized extends React.Component
                     </div>
                     <br></br>
                     <div className="error-actions">
-                        <Link to="/" className="btn btn-primary btn-lg"><span className="glyphicon glyphicon-home"></span>
+                        <Link to="/" className="btn btn-primary btn-lg" onClick={this.props.showHF}><span className="glyphicon glyphicon-home"></span>
                             Pagrindinis puslapis</Link>
                     </div>
                 </div>

@@ -5,23 +5,31 @@ import {
   Switch,
   Route,
   Link,
-  Redirect
+  Redirect,
+  withRouter
 } from "react-router-dom";
-import {loginContext, isLoggedIn, login, logout} from './auth'
+import {loginContext, isLoggedIn, Login, Logout, Register} from './auth'
+import {Ads} from './Ads'
 import {Categories} from './Categories'
 import {HomePage} from './HomePage'
 import {LoginForm} from './LoginForm'
+import {UserList} from './UsersAdmin'
+import {UserInfo} from './UserProfile'
 import NotFound from './404'
 import NotAuthorized from './403'
 import 'bootstrap/dist/css/bootstrap.css';
+import { Navbar, Nav } from 'react-bootstrap';
 import './index.css';
+import { RegistrationForm } from './RegistrationForm';
 //import * as constants from './constants'
+
+const component = withRouter(props => <App {...props}/>);
 
 class App extends React.Component {
   constructor(props)
   {
     super(props);
-    this.state = { hideHF: false };   
+    this.state = { hideHF: false, activeLink: "/" };   
   }
   hideHF = () =>
   {
@@ -45,20 +53,23 @@ class App extends React.Component {
   {
     let header = "";
     let footer = "";
-    if (typeof this.state.hideHF != 'undefined' && !this.state.hideHF)
-    {
-      header = <LinksLol/>;
-      footer = <TestFooter/>;
-    }
     let routerElement = "";
-    if (isLoggedIn())
+    let userRole = isLoggedIn();
+    console.log(this.props);
+    if (userRole === 2)
     {
       routerElement = <Switch>
+                      <Route path="/ads" component={(props) => (<Ads {...props}/>)} >
+                      </Route>
                       <Route path="/categories" component={(props) => (<Categories {...props}/>)} >
                       </Route>
-                      <Route exact path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." updateParent={this.hideHF} {...props}/>)} >
+                      <Route path="/userslist" component={(props) => (<UserList {...props}/>)} >
                       </Route>
-                      <Route exact path="/403" component={(props) => (<NotAuthorized updateParent={this.hideHF} {...props}/>)} >
+                      <Route path="/user" component={(props) => (<UserInfo {...props}/>)} >
+                      </Route>  
+                      <Route exact path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." hideHF={this.hideHF} showHF={this.showHF} {...props}/>)} >
+                      </Route>
+                      <Route exact path="/403" component={(props) => (<NotAuthorized hideHF={this.hideHF} showHF={this.showHF} {...props}/>)} >
                       </Route>               
                       <Route exact path="/" component={(props) => (<HomePage {...props}/>)}>
                       </Route>
@@ -66,9 +77,47 @@ class App extends React.Component {
                       </Route>
                       <Route exact path="/logout" component={(props) => (<Logout updateParent={this.updateApp} {...props}/>)}>
                       </Route>
+                      <Route exact path="/login" component={(props) => (<LoginForm updateParent={this.showHF} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/registration" component={(props) => (<RegistrationForm updateParent={this.showHF} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/register" component={(props) => (<Register updateApp={this.updateApp} {...props}/>)}>
+                      </Route>
                       <Route exact path="/loginAction" component={(props) => (<Login updateApp={this.updateApp} {...props}/>)}>
                       </Route>
-                      <Route exact path="/test" component={(props) => (<Test updateApp={this.showHF} {...props}/>)}>
+                      <Route path="/">
+                      <Redirect to="/404" />
+                      </Route>
+                      </Switch>
+    }
+    else if (userRole === 1)
+    {
+                      routerElement = <Switch>
+                      <Route path="/ads" component={(props) => (<Ads {...props}/>)} >
+                      </Route>
+                      <Route path="/user" component={(props) => (<UserInfo {...props}/>)} >
+                      </Route>                      
+                      <Route exact path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." hideHF={this.hideHF} showHF={this.showHF} {...props}/>)} >
+                      </Route>
+                      <Route exact path="/403" component={(props) => (<NotAuthorized hideHF={this.hideHF} showHF={this.showHF} {...props}/>)} >
+                      </Route>               
+                      <Route exact path="/" component={(props) => (<HomePage {...props}/>)}>
+                      </Route>
+                      <Route exact path="/login" component={(props) => (<LoginForm updateParent={this.showHF} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/logout" component={(props) => (<Logout updateParent={this.updateApp} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/registration" component={(props) => (<RegistrationForm updateParent={this.showHF} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/loginAction" component={(props) => (<Login updateApp={this.updateApp} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/register" component={(props) => (<Register updateApp={this.updateApp} {...props}/>)}>
+                      </Route>
+                      <Route path="/categories">
+                      <Redirect to="/403"/>
+                      </Route>
+                      <Route path="/userslist">
+                      <Redirect to="/403"/>
                       </Route>
                       <Route path="/">
                       <Redirect to="/404" />
@@ -78,9 +127,13 @@ class App extends React.Component {
     else
     {
       routerElement = <Switch>
-                      <Route exact path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." updateParent={this.hideHF} {...props}/>)} >
+                      <Route path="/ads" component={(props) => (<Ads {...props}/>)} >
                       </Route>
-                      <Route exact path="/403" component={(props) => (<NotAuthorized updateParent={this.hideHF} {...props}/>)} >
+                      <Route path="/user" component={(props) => (<UserInfo {...props}/>)} >
+                      </Route>  
+                      <Route exact path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." hideHF={this.hideHF} showHF={this.showHF} {...props}/>)} >
+                      </Route>
+                      <Route exact path="/403" component={(props) => (<NotAuthorized hideHF={this.hideHF} showHF={this.showHF} {...props}/>)} >
                       </Route>           
                       <Route exact path="/" component={(props) => (<HomePage {...props}/>)}>
                       </Route>
@@ -89,18 +142,27 @@ class App extends React.Component {
                       <Route exact path="/logout">
                       <Redirect to="/" />
                       </Route>
+                      <Route exact path="/register" component={(props) => (<Register updateApp={this.updateApp} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/registration" component={(props) => (<RegistrationForm updateParent={this.showHF} {...props}/>)}>
+                      </Route>
                       <Route exact path="/loginAction" component={(props) => (<Login updateApp={this.updateApp} {...props}/>)}>
-                      </Route>
-                      <Route exact path="/test">
-                      <Redirect to="/403" />
-                      </Route>
+                      </Route>                      
                       <Route exact path="/categories">
                       <Redirect to="/403" />
                       </Route>
                       <Route path="/">
+                      <Route path="/userslist">
+                      <Redirect to="/403"/>
+                      </Route>
                       <Redirect to="/404" />
                       </Route>
                       </Switch>
+    }
+    if (typeof this.state.hideHF != 'undefined' && !this.state.hideHF)
+    {
+      header = <Header/>;
+      footer = <Footer/>;
     }
     return (
       
@@ -116,96 +178,85 @@ class App extends React.Component {
   }
 }
 
-class LinksLol extends React.Component {
+class Header extends React.Component {
+  constructor(props)
+  {
+    super(props);
+    this.state = {activeKey: ""};
+  }
+  setActiveKey = (key) => 
+  {
+      this.setState({activeKey: key});
+  }
   render()
   {
-    if (isLoggedIn())
+    let userRole = isLoggedIn();
+    let navbarLeft = "";
+    let navbarRight = "";
+    if (userRole === 2)
     {
-      return (
-        <div>
-          username: {loginContext.user}<br></br>
-          id: {loginContext.id}<br></br>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/categories">Kategorijos</Link>
-            </li>
-            <li>
-              <Link to="/logout">Logout</Link>
-            </li>
-          </ul>
-          </div>
-      )
+      navbarLeft = 
+      <Nav className="mr-auto" activeKey={this.state.activeKey}>
+              <Nav.Link onClick = {() => this.setActiveKey("/")} eventKey = "/" as = {Link} to="/">Pagrindinis puslapis</Nav.Link>
+              <Nav.Link onClick = {() => this.setActiveKey("/ads")} eventKey = "/ads" as = {Link} to="/ads">Skelbimai</Nav.Link>
+              <Nav.Link onClick = {() => this.setActiveKey("/categories")} eventKey = "/categories" as = {Link} to="/categories">Kategorijos</Nav.Link>
+              <Nav.Link onClick = {() => this.setActiveKey("/userslist")} eventKey = "/userslist" as = {Link} to="/userslist">Vartotojų sąrašas</Nav.Link>
+              </Nav>
+            navbarRight = 
+            <Nav activeKey={this.state.activeKey}>
+              <Navbar.Text><i>Prisijungęs: {loginContext.user}</i></Navbar.Text>
+              <Nav.Link onClick = {() => this.setActiveKey("/user")} eventKey = "/user" as = {Link} to={"/user/"+loginContext.id}>Profilis</Nav.Link>
+              <Nav.Link onClick = {() => this.setActiveKey("/logout")} eventKey = "/logout" as = {Link} to="/logout">Atsijungti</Nav.Link>
+              </Nav>
+    }
+    else if (userRole === 1)
+    {
+      navbarLeft = 
+      <Nav className="mr-auto" activeKey={this.state.activeKey}>
+          <Nav.Link eventKey = "/" as = {Link} to="/">Pagrindinis puslapis</Nav.Link>
+          <Nav.Link eventKey = "/ads" as = {Link} to="/ads">Skelbimai</Nav.Link>     
+          </Nav>
+      navbarRight = 
+      <Nav activeKey={this.state.activeKey}>
+          <Navbar.Text><i>Prisijungęs: {loginContext.user}</i></Navbar.Text>
+          <Nav.Link eventKey = "/user" as = {Link} to={"/user/"+loginContext.id}>Profilis</Nav.Link>
+          <Nav.Link eventKey = "/logout" as = {Link} to="/logout">Atsijungti</Nav.Link>
+          </Nav>
     }
     else
     {
-      return (
-        <div>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-          </ul>
-          </div>
-      )
+      navbarLeft = 
+              <Nav className="mr-auto" activeKey={this.state.activeKey}>
+              <Nav.Link eventKey = "/" as = {Link} to="/">Pagrindinis puslapis</Nav.Link>
+              <Nav.Link eventKey = "/ads" as = {Link} to="/ads">Skelbimai</Nav.Link>
+              </Nav>
+      navbarRight = 
+              <Nav activeKey={this.state.activeKey}>
+              <Nav.Link eventKey = "/login" as = {Link} to="/login">Prisijungti</Nav.Link>
+              </Nav>
     }
+    return(
+      <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
+      <Navbar.Brand>Skelbimų portalas</Navbar.Brand>
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar.Collapse id="responsive-navbar-nav">
+      {navbarLeft}
+      {navbarRight}
+      </Navbar.Collapse>
+      </Navbar>
+    );
   }
 }
-class TestFooter extends React.Component {
+class Footer extends React.Component {
   render()
   {
     return(
-      <footer className="bottom-footer py-4 bg-dark text-white-50">
+      <footer className="bottom-footer py-4 bg-primary text-white-50">
     <div className="container text-center align-middle">
       <small>Copyright &copy; Your Website</small>
     </div>
   </footer>
     );
-  }
-}
-
-class Logout extends React.Component {
-  constructor(props)
-  {
-    super(props);
-    logout();
-    this.props.updateParent();
-  }
-  render()
-  {
-    return <Redirect to="/"></Redirect>
-  }
-}
-
-class Login extends React.Component {
-  constructor(props)
-  {
-    super(props);
-    if (this.props.location.state)
-    {
-      login(this.props.location.state.username, this.props.location.state.id);
-      this.props.updateApp();
-    }
-  }
-  render()
-  {
-    return <Redirect to="/"></Redirect>
-  }
-}
-class Test extends React.Component {
-  constructor(props)
-  {
-    super(props);
-    this.props.updateApp();
-  }
-  render()
-  {
-    return <p>You are logged in for sure!</p>
   }
 }
 

@@ -16,6 +16,7 @@ export class Categories extends React.Component {
           <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<Category detailed = {true} {...props}/>)}>
           </Route>
           <Route exact path="/categories">
+            <h1>Kategorijos</h1>
             <Category id = {1} detailed = {false}/>
             <Category id = {2} detailed = {false}/>
             <Category id = {3} detailed = {false}/>
@@ -43,6 +44,7 @@ class Category extends React.Component {
     {
       return (
         <div>
+        <h1>Kategorija</h1>
         <p>Tai yra detalus kategorijos {this.props.match.params.id} langas</p>
         <p><Link to="/categories/">Grįžti atgal</Link></p>
         </div>
