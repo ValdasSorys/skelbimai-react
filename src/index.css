@@ -20,7 +20,7 @@ html {
   position: relative;
   min-height: 100%;
 }
-#bottom-footer {
+.bottom-footer {
   position: absolute;
   left: 0;
   bottom: 0;

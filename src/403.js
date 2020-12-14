@@ -7,7 +7,7 @@ import './index.css';
 //import * as constants from './constants'
 
 
-class NotFound extends React.Component
+class NotAuthorized extends React.Component
 {
     constructor(props)
     {
@@ -33,9 +33,9 @@ class NotFound extends React.Component
                     <h1>
                         Klaida</h1>
                     <h2>
-                        404 Not Found</h2>
+                        403 Not Authorized</h2>
                     <div className="error-details">
-                        Atsiprašome, įvyko klaida. {errorMessage}
+                        Neturite prieigos prie šio resurso. {errorMessage}
                     </div>
                     <br></br>
                     <div className="error-actions">
@@ -48,4 +48,4 @@ class NotFound extends React.Component
     </div>)    
     }
 }
-export default NotFound;
+export default NotAuthorized;

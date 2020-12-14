@@ -8,8 +8,11 @@ import {
   Redirect
 } from "react-router-dom";
 import {loginContext, isLoggedIn, login, logout} from './auth'
+import {Categories} from './Categories'
+import {HomePage} from './HomePage'
+import {LoginForm} from './LoginForm'
 import NotFound from './404'
-import {App2} from './App';
+import NotAuthorized from './403'
 import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 //import * as constants from './constants'
@@ -18,28 +21,97 @@ class App extends React.Component {
   constructor(props)
   {
     super(props);
-    this.state = {update: this.update};
+    this.state = { hideHF: false };   
+  }
+  hideHF = () =>
+  {
+    if (this.state.hideHF === false)
+    {
+      this.setState({hideHF: true});
+    }
+  }
+  showHF = () =>
+  {
+    if (this.state.hideHF === true)
+    {
+      this.setState({hideHF : false});
+    }
+  }
+  updateApp = () =>
+  {
+    this.forceUpdate();
   }
   render()
   {
+    let header = "";
+    let footer = "";
+    if (typeof this.state.hideHF != 'undefined' && !this.state.hideHF)
+    {
+      header = <LinksLol/>;
+      footer = <TestFooter/>;
+    }
+    let routerElement = "";
+    if (isLoggedIn())
+    {
+      routerElement = <Switch>
+                      <Route path="/categories" component={(props) => (<Categories {...props}/>)} >
+                      </Route>
+                      <Route exact path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." updateParent={this.hideHF} {...props}/>)} >
+                      </Route>
+                      <Route exact path="/403" component={(props) => (<NotAuthorized updateParent={this.hideHF} {...props}/>)} >
+                      </Route>               
+                      <Route exact path="/" component={(props) => (<HomePage {...props}/>)}>
+                      </Route>
+                      <Route exact path="/login" component={(props) => (<LoginForm updateParent={this.showHF} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/logout" component={(props) => (<Logout updateParent={this.updateApp} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/loginAction" component={(props) => (<Login updateApp={this.updateApp} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/test" component={(props) => (<Test updateApp={this.showHF} {...props}/>)}>
+                      </Route>
+                      <Route path="/">
+                      <Redirect to="/404" />
+                      </Route>
+                      </Switch>
+    }
+    else
+    {
+      routerElement = <Switch>
+                      <Route exact path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." updateParent={this.hideHF} {...props}/>)} >
+                      </Route>
+                      <Route exact path="/403" component={(props) => (<NotAuthorized updateParent={this.hideHF} {...props}/>)} >
+                      </Route>           
+                      <Route exact path="/" component={(props) => (<HomePage {...props}/>)}>
+                      </Route>
+                      <Route exact path="/login" component={(props) => (<LoginForm updateParent={this.showHF} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/logout">
+                      <Redirect to="/" />
+                      </Route>
+                      <Route exact path="/loginAction" component={(props) => (<Login updateApp={this.updateApp} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/test">
+                      <Redirect to="/403" />
+                      </Route>
+                      <Route exact path="/categories">
+                      <Redirect to="/403" />
+                      </Route>
+                      <Route path="/">
+                      <Redirect to="/404" />
+                      </Route>
+                      </Switch>
+    }
     return (
+      
+      <div>      
       <Router>
-          <Switch>
-            <Route exact path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." {...props}/>)} >
-            </Route>            
-            <Route exact path="/about" component={(props) => (<About  {...props}/>)} >
-            </Route>
-            <Route path="/topics" component={(props) => (<Topics {...props}/>)}>
-            </Route>
-            <Route exact path="/" component={(props) => (<Home {...props}/>)}>
-            </Route>
-            <Route exact path="/logout" component={(props) => (<Logout {...props}/>)}>
-            </Route>
-			      <Route path="/">
-            <Redirect to="/404" />
-            </Route>
-          </Switch>
+          {header}
+          {routerElement}
+          {footer}
       </Router>
+      
+      </div>
     );
   }
 }
@@ -58,13 +130,7 @@ class LinksLol extends React.Component {
               <Link to="/">Home</Link>
             </li>
             <li>
-              <Link to="/about">About</Link>
-            </li>
-            <li>
-              <Link to="/topics">Topics</Link>
-            </li>
-            <li>
-              <Link to="/top">404</Link>
+              <Link to="/categories">Kategorijos</Link>
             </li>
             <li>
               <Link to="/logout">Logout</Link>
@@ -82,10 +148,7 @@ class LinksLol extends React.Component {
               <Link to="/">Home</Link>
             </li>
             <li>
-              <Link to="/about">About</Link>
-            </li>
-            <li>
-              <Link to="/topics">Topics</Link>
+              <Link to="/login">Login</Link>
             </li>
           </ul>
           </div>
@@ -97,7 +160,7 @@ class TestFooter extends React.Component {
   render()
   {
     return(
-      <footer id="bottom-footer" class="py-4 bg-dark text-white-50">
+      <footer className="bottom-footer py-4 bg-dark text-white-50">
     <div className="container text-center align-middle">
       <small>Copyright &copy; Your Website</small>
     </div>
@@ -105,195 +168,44 @@ class TestFooter extends React.Component {
     );
   }
 }
-class Home extends React.Component {
+
+class Logout extends React.Component {
   constructor(props)
   {
     super(props);
-    this.login = this.login.bind(this);
-    this.logout = this.logout.bind(this);
-    this.state = ({isLoggedIn : isLoggedIn(), username: "", id: "", redirect: null});
-    this.handleInputChange = this.handleInputChange.bind(this);
-  }
-  login(event)
-  {
-    login(this.state.username, this.state.id);
-    this.setState(state => ({isLoggedIn: isLoggedIn(), redirect: "/"}));
-  }
-  logout()
-  {
-    this.setState({redirect: "/logout"});
-  }
-  handleInputChange(event) {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-
-    this.setState({
-      [name]: value
-    });
-  }
-  render()
-  {
-    if (this.state.redirect) {
-      let redirect = this.state.redirect;
-      this.setState({redirect: null});
-      return <Redirect to={redirect} />
-    }
-    let button;
-    if (!this.state.isLoggedIn)
-    {
-      button = <form onSubmit={this.login}>
-                  <label>
-                    Name:
-                    <input name="username" type="text" required="required" maxlength="20" value={this.state.username} onChange={this.handleInputChange} />
-                  </label><br></br>
-                  <label>
-                    Id:
-                    <input name="id" type="number" min="1" step="1" required="required" value={this.state.id} onChange={this.handleInputChange} />
-                  </label><br></br>
-                  <input type="submit" value="Login" /><br></br>
-                </form>
-    }
-    else
-    {
-        button = <button onClick={this.logout}>
-                Logout
-                </button>
-    }
-    return (
-      <div>
-      <LinksLol/>
-      <h2>Home</h2>
-      {button}
-      <TestFooter/>
-      </div>
-    );
-  }
-}
-
-class About extends React.Component {
-  render()
-  {
-    return (
-      <div>
-      <LinksLol/>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      <h2>About</h2>
-      
-      <App2/>
-      <TestFooter/>
-      </div>
-    );
-  }
-}
-
-class Topics extends React.Component {
-  render()
-  {
-    let match = this.props.match;
-
-    return (
-      <div>
-      <LinksLol/>
-      <div>
-        <h2>Topics</h2>
-
-        <ul>
-          <li>
-            <Link to={`${match.url}/components`}>Components</Link>
-          </li>
-          <li>
-            <Link to={`${match.url}/props-v-state`}>
-              Props v. State
-            </Link>
-          </li>
-        </ul>
-
-        {/* The Topics page has its own <Switch> with more routes
-            that build on the /topics URL path. You can think of the
-            2nd <Route> here as an "index" page for all topics, or
-            the page that is shown when no topic is selected */}
-        <Switch>
-          <Route exact path={`${match.path}/:topicId`} component={(props) => (<Topic {...props}/>)}>
-          </Route>
-          <Route exact path="/topics">
-            <h3>Please select a topic.</h3>
-          </Route>
-          <Route path="/">
-            <Redirect to="/404" />
-            </Route>
-        </Switch>
-      </div>
-      <TestFooter/>
-      </div>
-    );
-  }
-}
-
-class Topic extends React.Component {
-  render()
-  {
-    let topicId = this.props.match.params.topicId;
-    return <h3>Requested topic ID: {topicId}</h3>;
-  }
-  
-}
-
-class Logout extends React.Component {
-  render()
-  {
     logout();
+    this.props.updateParent();
+  }
+  render()
+  {
     return <Redirect to="/"></Redirect>
+  }
+}
+
+class Login extends React.Component {
+  constructor(props)
+  {
+    super(props);
+    if (this.props.location.state)
+    {
+      login(this.props.location.state.username, this.props.location.state.id);
+      this.props.updateApp();
+    }
+  }
+  render()
+  {
+    return <Redirect to="/"></Redirect>
+  }
+}
+class Test extends React.Component {
+  constructor(props)
+  {
+    super(props);
+    this.props.updateApp();
+  }
+  render()
+  {
+    return <p>You are logged in for sure!</p>
   }
 }
 
