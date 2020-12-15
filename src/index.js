@@ -52,7 +52,6 @@ class App extends React.Component {
     let footer = "";
     let routerElement = "";
     let userRole = isLoggedIn();
-    console.log(this.props);
     if (userRole === 2)
     {
       routerElement = <Switch>
@@ -235,8 +234,7 @@ class Header extends React.Component {
               </Nav>
     }
     return(
-      <header>
-      <Navbar sticky="top" collapseOnSelect expand="lg" bg="primary" variant="dark">
+      <Navbar id="header" sticky="top" collapseOnSelect expand="lg" bg="primary" variant="dark">
       <Navbar.Brand>Skelbimai</Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
@@ -244,7 +242,6 @@ class Header extends React.Component {
       {navbarRight}
       </Navbar.Collapse>
       </Navbar>
-      </header>
     );
   }
 }

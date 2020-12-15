@@ -52,37 +52,7 @@ export class LoginForm extends React.Component {
       let button;
       if (!this.state.isLoggedIn)
       {
-        button =    /*<div>
-                    <h1>Prisijungimas</h1>
-                    <form onSubmit={this.login}>
-                    <label>
-                      Prsijungimo vardas:
-                      <input name="username" type="text" required="required" maxLength="20" value={this.state.username} onChange={this.handleInputChange} />
-                    </label><br></br>
-                    <label>
-                      Id:
-                      <input name="id" type="number" min="0" step="1" required="required" value={this.state.id} onChange={this.handleInputChange} />
-                    </label>
-                    Jei id - 0, admin
-                    <br></br>
-                    <input type="submit" value="Login" /><br></br>
-                    </form>
-                    </div>*/
-                    /*<Form onSubmit={this.login}>
-                    <Form.Group controlId="formBasicEmail">
-                      <Form.Label>Vartotojo vardas:</Form.Label>
-                      <Form.Control name="username" type="username" placeHolder="Slapyvardis" maxLength="20" required="required" value={this.state.username} onChange={this.handleInputChange} />
-                    </Form.Group>
-                  
-                    <Form.Group controlId="formBasicPassword">
-                      <Form.Label>Slaptažodis</Form.Label>
-                      <Form.Control name="id" type="password" maxLength="50" required="required" placeholder="Slaptažodis" value={this.state.id} onChange={this.handleInputChange}/>
-                    </Form.Group>
-                    <Button variant="primary" type="submit">
-                      Prisijungti
-                    </Button>
-                  </Form>*/
-                  <div className="animated-login auth-wrapper">
+        button =  <div className="animated-login auth-wrapper">
                     <div className="auth-inner">
                     <Form onSubmit={this.login}>
                     <Form.Group controlId="formBasicEmail">

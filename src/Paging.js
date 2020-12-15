@@ -14,8 +14,9 @@ export class PagingElement extends React.Component
     
     generatePagination(pageCount){
         var items = [];
-        items.push(<Pagination.Prev style={{"width": "40px"}} onClick={() => this.props.whenClicked(this.props.page - 1)}/>);
-        items.push(<Pagination.Item style={{"width": "40px"}} active = {this.props.page === 1 ? true : false} onClick={() => this.props.whenClicked(1)}>{1}</Pagination.Item>);
+        var keynum = 1;
+        items.push(<Pagination.Prev key ={keynum++} style={{"width": "40px"}} onClick={() => this.props.whenClicked(this.props.page - 1, this.props.moveToTop)}/>);
+        items.push(<Pagination.Item key ={keynum++} style={{"width": "40px"}} active = {this.props.page === 1 ? true : false} onClick={() => this.props.whenClicked(1, this.props.moveToTop)}>{1}</Pagination.Item>);
         
         var i;
         var iMax;
@@ -48,7 +49,7 @@ export class PagingElement extends React.Component
         }
         if (i > 2)
         {
-            items.push(<Pagination.Ellipsis style={{"width": "40px"}}/>);
+            items.push(<Pagination.Ellipsis key ={keynum++} style={{"width": "40px"}}/>);
             i = i + 1;
         }
         var addElipsis = false;;
@@ -61,26 +62,26 @@ export class PagingElement extends React.Component
             let pageNum = i;
             if (pageNum > 1 && pageNum < pageCount)
             {
-                items.push(<Pagination.Item style={{"width": "40px"}} active = {this.props.page === pageNum ? true : false} onClick={() => this.props.whenClicked(pageNum)}>{pageNum}</Pagination.Item>);
+                items.push(<Pagination.Item key ={keynum++} style={{"width": "40px"}} active = {this.props.page === pageNum ? true : false} onClick={() => this.props.whenClicked(pageNum, this.props.moveToTop)}>{pageNum}</Pagination.Item>);
             }
         }
         if (addElipsis)
         {
-            items.push(<Pagination.Ellipsis style={{"width": "40px"}}/>);
+            items.push(<Pagination.Ellipsis key ={keynum++} style={{"width": "40px"}}/>);
         }
         if (pageCount !== 1)
         {
-            items.push(<Pagination.Item style={{"width": "40px"}} active = {this.props.page === pageCount ? true : false} onClick={() => this.props.whenClicked(pageCount)}>{pageCount}</Pagination.Item>);
+            items.push(<Pagination.Item key ={keynum++} style={{"width": "40px"}} active = {this.props.page === pageCount ? true : false} onClick={() => this.props.whenClicked(pageCount, this.props.moveToTop)}>{pageCount}</Pagination.Item>);
         }            
-        items.push(<Pagination.Next style={{"width": "40px"}} onClick={() => this.props.whenClicked(this.props.page + 1)}/>);
+        items.push(<Pagination.Next key ={keynum++} style={{"width": "40px"}} onClick={() => this.props.whenClicked(this.props.page + 1, this.props.moveToTop)}/>);
         return items;
     }
     render()
   { 
     let pagingElements = this.generatePagination(this.props.pageCount);  
     return (
-        <div>
-        <Pagination>
+        <div style={{"margin": "0 auto", "display": "table", "height": "38px", "textOverflow": "ellipsis"}}>
+        <Pagination style={{"height":"0px"}}>
         {pagingElements}
         </Pagination>
         </div> 

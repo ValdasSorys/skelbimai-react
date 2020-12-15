@@ -22,7 +22,7 @@ export class ConfirmationModal extends React.Component
     render()
   {         
     return (      
-            <Modal show={this.state.show} onHide={this.handleButton1}>
+            <Modal show={this.state.show} onHide={this.handleButton1} centered>
             <Modal.Header className="border-0" closeButton>
               <Modal.Title>{this.state.header}</Modal.Title>
             </Modal.Header>

@@ -8,6 +8,11 @@ import {
   import {loginContext} from './auth'
 export class UserInfo extends React.Component
 {
+    constructor(props)
+    {
+      super(props);
+      console.log("xd");
+    }
     render()
   {
     let match = this.props.match;

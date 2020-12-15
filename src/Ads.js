@@ -1,6 +1,7 @@
 import React from 'react';
-import {Comments} from './Comments'
+//import {Comments} from './Comments'
 import {ConfirmationModal} from './ConfirmationModal'
+import {API_URL} from './constants'
 import {
     Link,
     Switch,
@@ -14,14 +15,60 @@ export class Ads extends React.Component
     constructor(props)
     {
         super(props);
-        this.state = {activePage: 1, pageCount: 20, showFiltering: false};
+        this.state = {activePage: 1, pageCount: 1, showFiltering: false, 
+          ads: null};
+    }
+    async componentDidMount() {
+      if (this.props.location.pathname === "/ads" || this.props.location.pathname === "/ads/")
+      {
+        window.scrollTo(0, 0);
+        await this.loadAdsFromAPI();    
+      }   
     }
 
-    setPage = (number) =>
+    loadAdsFromAPI = async () =>
+    {
+        const data = {
+        "page": this.state.activePage,
+        "limit": 3,
+        "sortby": "date",
+        "sortorder": "DESC"
+      }
+      const response = await fetch(API_URL+"ads/?actualMethod=GET/", {
+        mode: 'cors',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data) // body data type must match "Content-Type" header
+      });
+      if (response.status === 200)
+      {
+        let body = await response.json();
+        let items = [];
+        var i;
+        for (i = 0; i < body.ads.length; i++)
+        {
+          let key = i;
+          let adData = body.ads[key];
+          let dataAd = {adId: adData.id, ownerId: adData.user_id, owner: adData.username, name: adData.name, date: adData.date, 
+          text: adData.text, 
+          categoryId: adData.category, categoryName: adData.categoryname, price: adData.price, email: adData.email, phone: adData.phone};
+          items.push(dataAd)
+        }
+        this.setState({pageCount: Math.ceil(body.totalCount/3), ads: items})
+      }
+    }
+    setPage = async (number, moveToTop) =>
     {
         if (number > 0 && number <= this.state.pageCount)
         {
-            this.setState({activePage: number});
+            await this.setState({activePage: number, ads: null});
+            await this.loadAdsFromAPI(); 
+        }
+        if (moveToTop)
+        {
+          window.scroll({top: 0, left: 0, behavior: 'smooth' })
         }
     }
 
@@ -30,8 +77,18 @@ export class Ads extends React.Component
 
     render()
   {
-    let match = this.props.match; 
-         
+    let match = this.props.match;
+    let adList = null;
+    if (this.state.ads)
+    {
+      adList= [];
+      var i;
+      for (i = 0; i < this.state.ads.length; i++)
+      {
+        let keyList = i;
+        adList.push(<Ad key={keyList} data={this.state.ads[keyList]} detailed={false}/>);
+      }
+    }
     return (      
       <div className="elementContainer">
       <Switch>
@@ -39,7 +96,9 @@ export class Ads extends React.Component
           </Route>
           <Route exact path="/ads">
             <h1>Skelbimai{this.state.activePage}</h1>
-            <button onClick={this.handleShow} type="button" class="btn btn-primary">Filtravimas</button>
+            {this.state.ads ?
+            <div>
+            <button onClick={this.handleShow} type="button" className="btn btn-primary">Filtravimas</button>
             <Modal show={this.state.showFiltering} onHide={this.handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>Modal heading</Modal.Title>
@@ -54,100 +113,21 @@ export class Ads extends React.Component
               </Button>
             </Modal.Footer>
           </Modal>
-
+          <div style={{"height": "15px"}}></div>
+          <PagingElement moveToTop={false} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
             <table className="entryElement">
-            <tr>
-                    <td className="entryFirst">
-                    <div className="wrapper">
-                    <div style={{"font-size": "12px"}}>Savininkas:<br></br>valdas123</div>
-                    <div></div>
-                    <div style={{"font-size": "12px", "margin-top": "5px"}}>2020-12-12</div>
-                    </div>
-                    </td>
-                    
-                    <td className="entrySecond">
-                    <div className="wrapper">
-                    <div style={{"color": "#0275d8", "font-weight": "550"}}>
-                        Opel Astra
-                    </div>
-                    <div className="entryDetails">
-                        Labai geras ir puikus automobilis. Labai geras ir puikus automobilis. Labai geras ir puikus automobilis. 
-                    </div>
-                    <div style={{"margin-top": "-20px"}}>
-                        1250$
-                        <div style={{"color": "gray", "font-size": "15px"}}>
-                            Kategorija: Automobilis
-                        </div>
-                    </div>
-                    </div>
-                    </td>
-            </tr>
-            <tr>
-                    <td className="entryFirst">
-                    <div className="wrapper">
-                    <div style={{"font-size": "12px"}}>Savininkas:<br></br>valdas123</div>
-                    <div></div>
-                    <div style={{"font-size": "12px", "margin-top": "5px"}}>2020-12-12</div>
-                    </div>
-                    </td>
-                    
-                    <td className="entrySecond">
-                    <div className="wrapper">
-                    <div style={{"color": "#0275d8", "font-weight": "550"}}>
-                        Opel Astra
-                    </div>
-                    <div className="entryDetails">
-                        Labai geras ir puikus automobilis. Labai geras ir puikus automobilis. Labai geras ir puikus automobilis. 
-                    </div>
-                    <div style={{"margin-top": "-20px"}}>
-                        1250$
-                        <div style={{"color": "gray", "font-size": "15px"}}>
-                            Kategorija: Automobilis
-                        </div>
-                    </div>
-                    </div>
-                    </td>
-            </tr>
-            <tr>
-                    <td className="entryFirst">
-                    <div className="wrapper">
-                    <div style={{"font-size": "12px"}}>Savininkas:<br></br>valdas123</div>
-                    <div></div>
-                    <div style={{"font-size": "12px", "margin-top": "5px"}}>2020-12-12</div>
-                    </div>
-                    </td>
-                    
-                    <td className="entrySecond">
-                    <div className="wrapper">
-                    <div style={{"color": "#0275d8", "font-weight": "550"}}>
-                        Opel Astra
-                    </div>
-                    <div className="entryDetails">
-                        Labai geras ir puikus automobilis. Labai geras ir puikus automobilis. Labai geras ir puikus automobilis. 
-                    </div>
-                    <div style={{"margin-top": "-20px"}}>
-                        1250$
-                        <div style={{"color": "gray", "font-size": "15px"}}>
-                            Kategorija: Automobilis
-                        </div>
-                    </div>
-                    </div>
-                    </td>
-            </tr>
-        </table>
-        <div className="underFloat">
-            <Ad id = {1} detailed = {false}/>
-            <Ad id = {2} detailed = {false}/>
-            <Ad id = {3} detailed = {false}/>
-            <Ad id = {4} detailed = {false}/>
-        </div>
-        <div style={{"margin": "0 auto", "display": "table"}}>
-        <PagingElement pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
-        </div>
+            <tbody>
+            {adList}
+            </tbody>
+            </table>
+            
+        <PagingElement moveToTop={true} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
+        </div> : <div id="loader"></div>
+          }
           </Route>
           <Route path="/">
-            <Redirect to="/404" />
-            </Route>
+          <Redirect to="/404" />
+          </Route>
         </Switch>
       </div>
     );
@@ -159,8 +139,42 @@ class Ad extends React.Component
   constructor(props)
   {
     super(props);
-    this.state = { confirmationModal: "", text: ""}
+    let data = null;
+    if (this.props.location && this.props.location.state)
+    {
+      data = this.props.location.state;
+    }
+    else if (this.props.data)
+    {
+      data = this.props.data;
+    }
+    this.state = { confirmationModal: "", text: "", ad : data}   
   }
+  async componentDidMount() {
+    window.scrollTo(0, 0);
+    if (!this.state.ad)
+    {
+      await this.loadAdFromAPI();
+    }
+  } 
+  loadAdFromAPI = async () =>
+    {
+      const response = await fetch(API_URL+"ads/" + this.props.match.params.id + "/", {
+        mode: 'cors',
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (response.status === 200)
+      {
+        let adData = await response.json();
+        let dataAd = {adId: adData.id, ownerId: adData.user_id, owner: adData.username, name: adData.name, date: adData.date, 
+        text: adData.text, 
+        categoryId: adData.category, categoryName: adData.categoryname, price: adData.price, email: adData.email, phone: adData.phone};
+        this.setState({ad: dataAd, dataFetched: true});
+      }
+    }
   showConfirmation = () => 
   {
     let modal = <ConfirmationModal button1Name={"Atšaukti"} button2Name={"Patvirtinti"} text={""} header={"Ar tikrai norite kažką padaryti?"} onButton1Click={this.action1} onButton2Click={this.action2}/>
@@ -176,25 +190,61 @@ class Ad extends React.Component
   }
     render()
   {
+    let ad = this.state.ad;
     if (this.props.detailed === false)
     {
       return (
-        <p>Skelbimas: {this.props.id} <Link to={"/ads/" + this.props.id}>Atidaryti</Link></p>
+            <tr>
+                    <td className="entryFirst">
+                    <div className="wrapper">
+                    <div style={{"fontSize": "12px"}}>Savininkas:<br></br>{ad.owner}</div>
+                    <div></div>
+                    <div style={{"fontSize": "12px", "marginTop": "5px"}}>{ad.date}</div>
+                    </div>
+                    </td>
+                    
+                    <td className="entrySecond">
+                    <div className="wrapper">
+                    <Link to={{
+                        pathname: "/ads/" + ad.adId,
+                        state: this.props.data
+                      }}>
+                    <div style={{"color": "#0275d8", "fontWeight": "550"}}>
+                        {ad.name}
+                    </div>
+                    </Link>
+                    <div className="entryDetails">
+                        {ad.text}
+                    </div>
+                    <div style={{"marginTop": "-20px"}}>
+                        {ad.price}€
+                        <div style={{"color": "gray", "fontSize": "15px"}}>
+                            Kategorija: {ad.categoryName}
+                        </div>
+                    </div>
+                    </div>
+                    </td>
+            </tr>
       );
-    }//{show: true, button1Name: this.props.button1Name, button2Name: this.props.button2Name, 
-    //text: this.props.text, header: this.props.header, onButton1Click: this.props.onButton1Click, onButton2Click: this.props.onButton2Click};
+    }
     else
     {
       return (
-        <div>
-        <h1>Skelbimas</h1>
-        <p>Tai yra detalus skelbimo {this.props.match.params.id} langas</p>
-        <p>{this.state.text}</p>
-        <button onClick={this.showConfirmation} type="button" class="btn btn-primary">Atidaryti modal</button>
-        {this.state.confirmationModal}
-        <p><Link to="/ads/">Grįžti atgal</Link></p>
-        <h1>Komentarai</h1>
-        <Comments />
+        <div className="elementContainer">        
+        {
+          this.state.ad ?
+          <div>
+          <p>{ad.date}</p> 
+          <h2>{ad.name}</h2>
+          <p>Savininkas:<br></br>{ad.owner}</p>              
+          
+          <p>{ad.text}</p>
+          <p>{ad.price}€</p>
+          <p>{ad.email}</p>
+          <p>{ad.phone}</p>
+          <p>Kategorija: {ad.categoryName}</p>
+          </div> : <div id="loader"></div>
+        }
         </div>
       );
     }
