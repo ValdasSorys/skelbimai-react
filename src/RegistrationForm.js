@@ -48,7 +48,7 @@ export class RegistrationForm extends React.Component {
       if (!this.state.isLoggedIn)
       {
         form =    <div>
-                    <h1>Prisijungimas</h1>
+                    <h1>Registracija</h1>
                     <form onSubmit={this.register}>
                     <label>
                       Prsijungimo vardas:

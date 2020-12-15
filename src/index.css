@@ -108,6 +108,10 @@ div.filteringOptions
 {
   min-width: 300px;
 }
+table.entryElement
+{
+  margin-top: 15px;
+}
 table.entryElement tr td
 {
   vertical-align: top; 
@@ -151,8 +155,8 @@ td.entrySecond
 {
   div.elementContainer
   {
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
   }
 }
 

@@ -1,19 +1,20 @@
 import React from 'react';
 import {Comments} from './Comments'
+import {ConfirmationModal} from './ConfirmationModal'
 import {
     Link,
     Switch,
     Route,
     Redirect
   } from "react-router-dom";
-import { Pagination } from 'react-bootstrap';
 import {PagingElement} from './Paging';
+import {Modal, Button} from 'react-bootstrap';
 export class Ads extends React.Component
 {
     constructor(props)
     {
         super(props);
-        this.state = {activePage: 1, pageCount: 20};
+        this.state = {activePage: 1, pageCount: 20, showFiltering: false};
     }
 
     setPage = (number) =>
@@ -24,18 +25,13 @@ export class Ads extends React.Component
         }
     }
 
+    handleClose = () => this.setState({showFiltering: false});
+    handleShow = () => this.setState({showFiltering: true});
+
     render()
   {
-    let match = this.props.match;  
-    let active = 2;
-    let items = [];
-    for (let number = 1; number <= 5; number++) {
-    items.push(
-        <Pagination.Item key={number} active={number === active}>
-        {number}
-        </Pagination.Item>,
-    );
-}      
+    let match = this.props.match; 
+         
     return (      
       <div className="elementContainer">
       <Switch>
@@ -43,10 +39,22 @@ export class Ads extends React.Component
           </Route>
           <Route exact path="/ads">
             <h1>Skelbimai{this.state.activePage}</h1>
-            <div className="filteringOptions">
-            <p>test</p>
-            <p>testtest</p>
-            </div>
+            <button onClick={this.handleShow} type="button" class="btn btn-primary">Filtravimas</button>
+            <Modal show={this.state.showFiltering} onHide={this.handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Modal heading</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={this.handleClose}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={this.handleClose}>
+                Save Changes
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
             <table className="entryElement">
             <tr>
                     <td className="entryFirst">
@@ -148,6 +156,24 @@ export class Ads extends React.Component
 
 class Ad extends React.Component
 {
+  constructor(props)
+  {
+    super(props);
+    this.state = { confirmationModal: "", text: ""}
+  }
+  showConfirmation = () => 
+  {
+    let modal = <ConfirmationModal button1Name={"Atšaukti"} button2Name={"Patvirtinti"} text={""} header={"Ar tikrai norite kažką padaryti?"} onButton1Click={this.action1} onButton2Click={this.action2}/>
+    this.setState({confirmationModal: modal});
+  }
+  action1 = () =>
+  {
+    this.setState({confirmationModal: "", text: "Cancelled"});
+  }
+  action2 = () =>
+  {
+    this.setState({confirmationModal: "", text: "Confirmed"});
+  }
     render()
   {
     if (this.props.detailed === false)
@@ -155,13 +181,17 @@ class Ad extends React.Component
       return (
         <p>Skelbimas: {this.props.id} <Link to={"/ads/" + this.props.id}>Atidaryti</Link></p>
       );
-    }
+    }//{show: true, button1Name: this.props.button1Name, button2Name: this.props.button2Name, 
+    //text: this.props.text, header: this.props.header, onButton1Click: this.props.onButton1Click, onButton2Click: this.props.onButton2Click};
     else
     {
       return (
         <div>
         <h1>Skelbimas</h1>
         <p>Tai yra detalus skelbimo {this.props.match.params.id} langas</p>
+        <p>{this.state.text}</p>
+        <button onClick={this.showConfirmation} type="button" class="btn btn-primary">Atidaryti modal</button>
+        {this.state.confirmationModal}
         <p><Link to="/ads/">Grįžti atgal</Link></p>
         <h1>Komentarai</h1>
         <Comments />

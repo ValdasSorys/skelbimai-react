@@ -230,6 +230,7 @@ class Header extends React.Component {
               </Nav>
       navbarRight = 
               <Nav className="ml-auto" activeKey={this.state.activeKey}>
+                <Nav.Link onClick = {() => this.setActiveKey("/registration")} eventKey = "/registration" as = {Link} to="/registration">Registruotis</Nav.Link>
               <Nav.Link onClick = {() => this.setActiveKey("/login")} eventKey = "/login" as = {Link} to="/login">Prisijungti</Nav.Link>
               </Nav>
     }
