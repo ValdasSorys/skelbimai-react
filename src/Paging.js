@@ -1,11 +1,4 @@
 import React from 'react';
-import {Comments} from './Comments'
-import {
-    Link,
-    Switch,
-    Route,
-    Redirect
-  } from "react-router-dom";
 import { Pagination } from 'react-bootstrap';
 export class PagingElement extends React.Component
 {
