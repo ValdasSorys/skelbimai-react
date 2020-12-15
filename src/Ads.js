@@ -7,17 +7,23 @@ import {
     Redirect
   } from "react-router-dom";
 import { Pagination } from 'react-bootstrap';
+import {PagingElement} from './Paging';
 export class Ads extends React.Component
 {
     constructor(props)
     {
         super(props);
-        this.state = { matches: window.matchMedia("(min-width: 992px)").matches };
+        this.state = {activePage: 1, pageCount: 20};
     }
-    componentDidMount() {
-        const handler = e => this.setState({matches: e.matches});
-        window.matchMedia("(min-width: 992px)").addListener(handler);
-      }
+
+    setPage = (number) =>
+    {
+        if (number > 0 && number <= this.state.pageCount)
+        {
+            this.setState({activePage: number});
+        }
+    }
+
     render()
   {
     let match = this.props.match;  
@@ -36,7 +42,7 @@ export class Ads extends React.Component
           <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<Ad detailed = {true} {...props}/>)}>
           </Route>
           <Route exact path="/ads">
-            <h1>Skelbimai</h1>
+            <h1>Skelbimai{this.state.activePage}</h1>
             <div className="filteringOptions">
             <p>test</p>
             <p>testtest</p>
@@ -128,38 +134,7 @@ export class Ads extends React.Component
             <Ad id = {4} detailed = {false}/>
         </div>
         <div style={{"margin": "0 auto", "display": "table"}}>
-        {this.state.matches &&
-        (<Pagination>
-        <Pagination.First />
-        <Pagination.Prev />
-        <Pagination.Item>{1}</Pagination.Item>
-        <Pagination.Ellipsis />
-
-        <Pagination.Item>{10}</Pagination.Item>
-        <Pagination.Item>{11}</Pagination.Item>
-        <Pagination.Item active>{12}</Pagination.Item>
-        <Pagination.Item>{13}</Pagination.Item>
-        <Pagination.Item>{14}</Pagination.Item>
-
-        <Pagination.Ellipsis />
-        <Pagination.Item>{20}</Pagination.Item>
-        <Pagination.Next />
-        <Pagination.Last />
-        </Pagination>)
-        }
-        {!this.state.matches &&
-        (<Pagination>
-        <Pagination.Prev />
-        <Pagination.Item>{1}</Pagination.Item>
-        <Pagination.Ellipsis />
-        <Pagination.Item>{11}</Pagination.Item>
-        <Pagination.Item active>{12}</Pagination.Item>
-        <Pagination.Item>{13}</Pagination.Item>
-        <Pagination.Ellipsis />
-        <Pagination.Item>{20}</Pagination.Item>
-        <Pagination.Next />
-        </Pagination>)
-        }
+        <PagingElement pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
         </div>
           </Route>
           <Route path="/">
