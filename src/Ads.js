@@ -1,5 +1,5 @@
 import React from 'react';
-//import {Comments} from './Comments'
+import {Comments} from './Comments'
 import {ConfirmationModal} from './ConfirmationModal'
 import {API_URL} from './constants'
 import {
@@ -16,12 +16,12 @@ export class Ads extends React.Component
     {
         super(props);
         this.state = {activePage: 1, pageCount: 1, showFiltering: false, 
-          ads: null};
+          ads: null, role: this.props.role};
     }
     async componentDidMount() {
       if (this.props.location.pathname === "/ads" || this.props.location.pathname === "/ads/")
       {
-        window.scrollTo(0, 0);
+        window.scroll({top: 0, left: 0, behavior: 'smooth' })
         await this.loadAdsFromAPI();    
       }   
     }
@@ -30,10 +30,11 @@ export class Ads extends React.Component
     {
         const data = {
         "page": this.state.activePage,
-        "limit": 3,
+        "limit": 10,
         "sortby": "date",
         "sortorder": "DESC"
       }
+      console.log(JSON.stringify(data));
       const response = await fetch(API_URL+"ads/?actualMethod=GET/", {
         mode: 'cors',
         method: 'POST',
@@ -56,19 +57,22 @@ export class Ads extends React.Component
           categoryId: adData.category, categoryName: adData.categoryname, price: adData.price, email: adData.email, phone: adData.phone};
           items.push(dataAd)
         }
-        this.setState({pageCount: Math.ceil(body.totalCount/3), ads: items})
+        this.setState({pageCount: Math.ceil(body.totalCount/10), ads: items})
       }
     }
     setPage = async (number, moveToTop) =>
     {
-        if (number > 0 && number <= this.state.pageCount)
+        if (number !== this.state.activePage)
         {
-            await this.setState({activePage: number, ads: null});
-            await this.loadAdsFromAPI(); 
-        }
-        if (moveToTop)
-        {
-          window.scroll({top: 0, left: 0, behavior: 'smooth' })
+          if (number > 0 && number <= this.state.pageCount)
+          {
+              await this.setState({activePage: number, ads: null});
+              await this.loadAdsFromAPI(); 
+          }
+          if (moveToTop)
+          {
+            window.scroll({top: 0, left: 0, behavior: 'smooth' })
+          }
         }
     }
 
@@ -89,16 +93,32 @@ export class Ads extends React.Component
         adList.push(<Ad key={keyList} data={this.state.ads[keyList]} detailed={false}/>);
       }
     }
+    let extraButtons = "";
+    if (this.state.role === 0)
+    {
+      extraButtons = <div>
+                      <button onClick={this.handleShow} type="button" className="btn btn-primary">Filtravimas</button>
+                    </div>
+    }
+    else if (this.state.role === 1 || this.state.role === 2)
+    {
+      extraButtons = <div>
+                        <button onClick={this.handleShow} type="button" className="btn btn-primary mr-1">Filtravimas</button>
+                      <Link to="/ads/create">                        
+                        <button type="button" className="btn btn-primary">Kurti skelbimą</button>
+                      </Link>
+                    </div>
+    }
     return (      
       <div className="elementContainer">
       <Switch>
           <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<Ad detailed = {true} {...props}/>)}>
           </Route>
           <Route exact path="/ads">
-            <h1>Skelbimai{this.state.activePage}</h1>
+            <h1>Skelbimai</h1>
             {this.state.ads ?
             <div>
-            <button onClick={this.handleShow} type="button" className="btn btn-primary">Filtravimas</button>
+            {extraButtons}
             <Modal show={this.state.showFiltering} onHide={this.handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>Modal heading</Modal.Title>
@@ -114,14 +134,17 @@ export class Ads extends React.Component
             </Modal.Footer>
           </Modal>
           <div style={{"height": "15px"}}></div>
+          <div style={{"display": "inline-block"}}>
           <PagingElement moveToTop={false} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
+
             <table className="entryElement">
             <tbody>
             {adList}
             </tbody>
             </table>
             
-        <PagingElement moveToTop={true} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
+          <PagingElement moveToTop={true} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
+          </div>
         </div> : <div id="loader"></div>
           }
           </Route>
@@ -151,7 +174,7 @@ class Ad extends React.Component
     this.state = { confirmationModal: "", text: "", ad : data}   
   }
   async componentDidMount() {
-    window.scrollTo(0, 0);
+    window.scroll({top: 0, left: 0, behavior: 'smooth' })
     if (!this.state.ad)
     {
       await this.loadAdFromAPI();
@@ -243,7 +266,9 @@ class Ad extends React.Component
           <p>{ad.email}</p>
           <p>{ad.phone}</p>
           <p>Kategorija: {ad.categoryName}</p>
+          <Comments adId ={ad.adId}/>
           </div> : <div id="loader"></div>
+          
         }
         </div>
       );

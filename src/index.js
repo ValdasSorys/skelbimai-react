@@ -19,6 +19,7 @@ import NotAuthorized from './403'
 import 'bootstrap/dist/css/bootstrap.css';
 import { Navbar, Nav } from 'react-bootstrap';
 import './index.css';
+import './smallLoader.css';
 import { RegistrationForm } from './RegistrationForm';
 //import * as constants from './constants'
 
@@ -55,7 +56,7 @@ class App extends React.Component {
     if (userRole === 2)
     {
       routerElement = <Switch>
-                      <Route path="/ads" component={(props) => (<Ads {...props}/>)} >
+                      <Route path="/ads" component={(props) => (<Ads role = {userRole} {...props}/>)} >
                       </Route>
                       <Route path="/categories" component={(props) => (<Categories {...props}/>)} >
                       </Route>
@@ -73,7 +74,9 @@ class App extends React.Component {
                       </Route>
                       <Route exact path="/logout" component={(props) => (<Logout updateParent={this.updateApp} {...props}/>)}>
                       </Route>
-                      <Route exact path="/login" component={(props) => (<LoginForm updateParent={this.showHF} {...props}/>)}>
+                      <Route exact path="/login" component={(props) => (<LoginForm isAdmin={false} updateParent={this.showHF} updateApp={this.updateApp} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/loginadmin" component={(props) => (<LoginForm isAdmin={true} updateParent={this.showHF} updateApp={this.updateApp} {...props}/>)}>
                       </Route>
                       <Route exact path="/registration" component={(props) => (<RegistrationForm updateParent={this.showHF} {...props}/>)}>
                       </Route>
@@ -89,7 +92,7 @@ class App extends React.Component {
     else if (userRole === 1)
     {
                       routerElement = <Switch>
-                      <Route path="/ads" component={(props) => (<Ads {...props}/>)} >
+                      <Route path="/ads" component={(props) => (<Ads role = {userRole} {...props}/>)} >
                       </Route>
                       <Route path="/user" component={(props) => (<UserInfo {...props}/>)} >
                       </Route>                      
@@ -99,7 +102,9 @@ class App extends React.Component {
                       </Route>               
                       <Route exact path="/" component={(props) => (<HomePage {...props}/>)}>
                       </Route>
-                      <Route exact path="/login" component={(props) => (<LoginForm updateParent={this.showHF} {...props}/>)}>
+                      <Route exact path="/login" component={(props) => (<LoginForm isAdmin={false}  updateParent={this.showHF} updateApp={this.updateApp} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/loginadmin" component={(props) => (<LoginForm isAdmin={true} updateParent={this.showHF} updateApp={this.updateApp} {...props}/>)}>
                       </Route>
                       <Route exact path="/logout" component={(props) => (<Logout updateParent={this.updateApp} {...props}/>)}>
                       </Route>
@@ -123,7 +128,7 @@ class App extends React.Component {
     else
     {
       routerElement = <Switch>
-                      <Route path="/ads" component={(props) => (<Ads {...props}/>)} >
+                      <Route path="/ads" component={(props) => (<Ads role = {userRole} {...props}/>)} >
                       </Route>
                       <Route path="/user" component={(props) => (<UserInfo {...props}/>)} >
                       </Route>  
@@ -133,7 +138,9 @@ class App extends React.Component {
                       </Route>           
                       <Route exact path="/" component={(props) => (<HomePage {...props}/>)}>
                       </Route>
-                      <Route exact path="/login" component={(props) => (<LoginForm updateParent={this.showHF} {...props}/>)}>
+                      <Route exact path="/login" component={(props) => (<LoginForm isAdmin={false} updateParent={this.showHF} updateApp={this.updateApp} {...props}/>)}>
+                      </Route>
+                      <Route exact path="/loginadmin" component={(props) => (<LoginForm isAdmin={true} updateParent={this.showHF} updateApp={this.updateApp} {...props}/>)}>
                       </Route>
                       <Route exact path="/logout">
                       <Redirect to="/" />
