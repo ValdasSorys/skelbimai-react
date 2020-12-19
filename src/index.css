@@ -20,13 +20,6 @@ html {
   position: relative;
   min-height: 100%;
 }
-.bottom-footer {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 70px;
-  width: 100%;
-}
 
 .auth-wrapper {
   margin-top: 100px;
@@ -222,9 +215,6 @@ div.entryDetails
   text-overflow: ellipsis; 
 }
 
-footer {
-  font-family: "Sofia", sans-serif;
-}
 
 /*header {
   font-family: "Sofia", sans-serif;

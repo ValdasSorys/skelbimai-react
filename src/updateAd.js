@@ -47,6 +47,10 @@ export class UpdateAdModal extends React.Component
     handleShow = () => this.setState({show: true});
     handleButton2 = () =>
     {
+        if (this.state.isLoadingSmall)
+        {
+            return;
+        }
       this.state.onButton2Click();
     }
     submit = async (event) =>
@@ -97,7 +101,7 @@ export class UpdateAdModal extends React.Component
 
     }
     render()
-  {         
+    {         
         if (this.state.isLoading)
         {
             return <Modal show={this.state.show} onHide={this.handleButton2} centered>

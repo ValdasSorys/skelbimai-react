@@ -8,27 +8,28 @@ import {
 export class UserList extends React.Component
 {
     render()
-  {
-    let match = this.props.match;        
-    return (      
-      <div>
-      <Switch>
-          <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<User detailed = {true} {...props}/>)}>
-          </Route>
-          <Route exact path="/userslist">
-            <h1>Vartotojai</h1>
-            <User id = {1} detailed = {false}/>
-            <User id = {2} detailed = {false}/>
-            <User id = {3} detailed = {false}/>
-            <User id = {4} detailed = {false}/>
-          </Route>
-          <Route path="/">
-            <Redirect to="/404" />
+    {
+      document.title = "Vartotojų sąrašas";
+      let match = this.props.match;        
+      return (      
+        <div>
+        <Switch>
+            <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<User detailed = {true} {...props}/>)}>
             </Route>
-        </Switch>
-      </div>
-    );
-  }
+            <Route exact path="/userslist">
+              <h1>Vartotojai</h1>
+              <User id = {1} detailed = {false}/>
+              <User id = {2} detailed = {false}/>
+              <User id = {3} detailed = {false}/>
+              <User id = {4} detailed = {false}/>
+            </Route>
+            <Route path="/">
+              <Redirect to="/404" />
+              </Route>
+          </Switch>
+        </div>
+      );
+    }
 }
 
 class User extends React.Component

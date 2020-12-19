@@ -77,11 +77,10 @@ export class CreateAd extends React.Component
         {
             this.setState({errorMessage: "Nežinoma klaida, bandykite dar kartą", isLoadingSmall: false});
         }
-
-
     }
     render()
     {
+        document.title = "Skelbimo kūrimas";
         if (this.state.redirect) {
             let redirect = this.state.redirect;
             if (this.state.params)

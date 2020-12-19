@@ -15,8 +15,8 @@ export class PagingElement extends React.Component
     generatePagination(pageCount){
         var items = [];
         var keynum = 1;
-        items.push(<Pagination.Prev key ={keynum++} style={{"width": "40px"}} onClick={() => this.props.whenClicked(this.props.page - 1, this.props.moveToTop)}/>);
-        items.push(<Pagination.Item key ={keynum++} style={{"width": "40px"}} active = {this.props.page === 1 ? true : false} onClick={() => this.props.whenClicked(1, this.props.moveToTop)}>{1}</Pagination.Item>);
+        items.push(<Pagination.Prev key ={keynum++} style={{"textAlign":"center", "minWidth": "40px"}} onClick={() => this.props.whenClicked(this.props.page - 1, this.props.moveToTop)}/>);
+        items.push(<Pagination.Item key ={keynum++} style={{"textAlign":"center", "minWidth": "40px"}} active = {this.props.page === 1 ? true : false} onClick={() => this.props.whenClicked(1, this.props.moveToTop)}>{1}</Pagination.Item>);
         
         var i;
         var iMax;
@@ -49,7 +49,7 @@ export class PagingElement extends React.Component
         }
         if (i > 2)
         {
-            items.push(<Pagination.Ellipsis key ={keynum++} style={{"width": "40px"}}/>);
+            items.push(<Pagination.Ellipsis key ={keynum++} style={{"textAlign":"center", "minWidth": "40px"}}/>);
             i = i + 1;
         }
         var addElipsis = false;;
@@ -62,18 +62,18 @@ export class PagingElement extends React.Component
             let pageNum = i;
             if (pageNum > 1 && pageNum < pageCount)
             {
-                items.push(<Pagination.Item key ={keynum++} style={{"width": "40px"}} active = {this.props.page === pageNum ? true : false} onClick={() => this.props.whenClicked(pageNum, this.props.moveToTop)}>{pageNum}</Pagination.Item>);
+                items.push(<Pagination.Item key ={keynum++} style={{"textAlign":"center", "minWidth": "40px"}} active = {this.props.page === pageNum ? true : false} onClick={() => this.props.whenClicked(pageNum, this.props.moveToTop)}>{pageNum}</Pagination.Item>);
             }
         }
         if (addElipsis)
         {
-            items.push(<Pagination.Ellipsis key ={keynum++} style={{"width": "40px"}}/>);
+            items.push(<Pagination.Ellipsis key ={keynum++} style={{"textAlign":"center", "minWidth": "40px"}}/>);
         }
         if (pageCount !== 1)
         {
-            items.push(<Pagination.Item key ={keynum++} style={{"width": "40px"}} active = {this.props.page === pageCount ? true : false} onClick={() => this.props.whenClicked(pageCount, this.props.moveToTop)}>{pageCount}</Pagination.Item>);
+            items.push(<Pagination.Item key ={keynum++} style={{"textAlign":"center", "minWidth": "40px"}} active = {this.props.page === pageCount ? true : false} onClick={() => this.props.whenClicked(pageCount, this.props.moveToTop)}>{pageCount}</Pagination.Item>);
         }            
-        items.push(<Pagination.Next key ={keynum++} style={{"width": "40px"}} onClick={() => this.props.whenClicked(this.props.page + 1, this.props.moveToTop)}/>);
+        items.push(<Pagination.Next key ={keynum++} style={{"textAlign":"center", "minWidth": "40px"}} onClick={() => this.props.whenClicked(this.props.page + 1, this.props.moveToTop)}/>);
         return items;
     }
     render()

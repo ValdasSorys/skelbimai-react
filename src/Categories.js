@@ -19,6 +19,7 @@ export class Categories extends React.Component {
   }
   render()
   {
+    document.title = "Kategorijos";
     let match = this.props.match;   
     let categories = ""; 
     if (this.state.loaded)
@@ -46,7 +47,7 @@ export class Categories extends React.Component {
           </Route>
           <Route path="/">
             <Redirect to="/404" />
-            </Route>
+          </Route>
         </Switch>
       </div>
     );

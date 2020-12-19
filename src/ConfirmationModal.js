@@ -13,11 +13,19 @@ export class ConfirmationModal extends React.Component
     handleShow = () => this.setState({show: true});
     handleButton1 = () =>
     {        
+        if (this.state.isLoading)
+        {
+          return;
+        }
         this.state.onButton1Click();
         this.setState({isLoading: true});
     }
     handleButton2 = () =>
     {
+      if (this.state.isLoading)
+      {
+        return;
+      }
       this.state.onButton2Click();
     }
     render()

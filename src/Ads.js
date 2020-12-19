@@ -40,7 +40,7 @@ export class Ads extends React.Component
     }
     reload = async () =>
     {
-      this.setState({onlyRouting: false, ads: null});
+      await this.setState({onlyRouting: false, ads: null});
       await this.loadAdsFromAPI();  
     }
     loadAdsFromAPI = async () =>
@@ -96,7 +96,8 @@ export class Ads extends React.Component
     handleShow = () => this.setState({showFiltering: true});
 
     render()
-  {
+    {
+      document.title = "Skelbimai";
     let unAllowedRoutes = null;
     if (isLoggedIn() === 0)
     {
@@ -189,9 +190,6 @@ export class Ads extends React.Component
           <div > 
             <div className="container">
             <div className="row">
-            <h1>Skelbimai</h1>
-            </div>
-            <div className="row">
             {extraButtons}   
             </div></div>     
             <PagingElement moveToTop={false} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
@@ -224,13 +222,20 @@ class Ad extends React.Component
     let reloadParentVar = false;
     if (this.props.location && this.props.location.state && this.props.location.state.dataAd)
     {
-      data = this.props.location.state.dataAd;
+      if (this.props.location.state.dataAd)
+      {
+        data = this.props.location.state.dataAd;
+      }
+      if (this.props.location.state.reloadParent)
+      {
+        reloadParentVar = this.props.location.state.reloadParent;
+      }
     }    
     else if (this.props.data)
     {
       data = this.props.data;
     }
-    this.state = { confirmationModal: "", text: "", ad : data, adDeleted: false, reloadParent: reloadParentVar, updateAdModal: null}   
+    this.state = { confirmationModal: "", text: "", ad : data, adDeleted: false, reloadParent: reloadParentVar, updateAdModal: null, redirect: null, ignoreReload: false}   
     this.onAdUpdate = this.onAdUpdate.bind(this);
     this.hideUpdateAdModal = this.hideUpdateAdModal.bind(this);
     this.showUpdateAdModal = this.showUpdateAdModal.bind(this);
@@ -243,6 +248,10 @@ class Ad extends React.Component
     }
   } 
   componentWillUnmount(){
+    if (!this.props.detailed || this.state.ignoreReload)
+    {
+      return;
+    }
     if (this.props.reloadParentOnOnmount)
     {
       this.props.reload();
@@ -251,10 +260,10 @@ class Ad extends React.Component
     {
       this.props.reload();
     }
-    else if (this.props.location && this.props.location.state && this.props.location.state.reloadParent)
+    /*else if (this.props.location && this.props.location.state && this.props.location.state.reloadParent)
     {
       this.props.reload();
-    }
+    }*/
   }
   loadAdFromAPI = async () =>
     {
@@ -277,6 +286,10 @@ class Ad extends React.Component
           state: {dataAd: dataAd}
         });*/
       }
+      else if (response.status === 404)
+      {
+        this.setState({redirect: "/404"});
+      }
     }
   
   tryToDelete = () =>
@@ -298,13 +311,16 @@ class Ad extends React.Component
   {
       this.setState({updateAdModal: null});
   }
-  onAdUpdate(newAdData)
-  {
+  async onAdUpdate(newAdData)
+  {    
+    await this.setState({ignoreReload: true});
     this.props.history.replace({
       pathname: '/ads/' + newAdData.adId,
-      state: {dataAd: newAdData}
+      state: {dataAd: newAdData, reloadParent: true}
     });
-    this.setState({ad: newAdData, reloadParent: true, updateAdModal: null});
+    
+    //this.setState({ad: newAdData, reloadParent: true, updateAdModal: null});
+    
   }
   delete = async () =>
   {
@@ -328,6 +344,26 @@ class Ad extends React.Component
   }
   render()
   {
+    if (this.props.detailed)
+    {
+      document.title = "Skelbimas";
+    }
+    if (this.state.redirect) {
+      let redirect = this.state.redirect;
+      if (this.state.params)
+      {
+        let params = this.state.params;
+        return <Redirect to={{
+          pathname: redirect,
+          state:  params 
+      }}
+        />
+      }
+      else
+      {
+        return <Redirect to={redirect} />
+      }
+    }
     if (this.state.adDeleted)
     {
       return <div>
@@ -394,7 +430,7 @@ class Ad extends React.Component
       }
       return (
         
-<div className="elementContainer">        
+        <div>        
         {
           this.state.ad ?
           <div>
@@ -430,6 +466,7 @@ class Ad extends React.Component
                   
                     <div>
                       <b>Kaina: {ad.price}€</b><br></br>
+                      <b>Savininkas: {ad.owner}</b><br></br>
                       <b>El. paštas: {ad.email}</b><br></br>
                       <b>Telefono nr.: {ad.phone}</b>
                     </div>

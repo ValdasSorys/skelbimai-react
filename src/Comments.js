@@ -1,13 +1,19 @@
 import React from 'react';
 import {API_URL} from './constants'
 import {PagingElement} from './Paging';
-import {Modal, Button, Form, ListGroup, ListGroupItem, Media, Card} from 'react-bootstrap';
+import {ConfirmationModal} from './ConfirmationModal'
+import {UpdateComment} from './UpdateComment'
+import {isLoggedIn, loginContext, getToken} from './auth';
+import {Button, Form, Card} from 'react-bootstrap';
 export class Comments extends React.Component
 {
   constructor(props)
   {
     super(props);
-    this.state = {comments: null, isLoading: true, activePage: 1, pageCount: 1};
+    this.state = {comments: null, isLoading: true, isLoadingSmall: false, activePage: 1, pageCount: 1, totalCount: 0, writeComment: "", writeCommentSuccess: null, writeCommmentFail: null};
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.writeComment = this.writeComment.bind(this);
+    this.loadCommentFromAPI = this.loadCommentFromAPI.bind(this);
   }
     async componentDidMount()
     {
@@ -15,6 +21,49 @@ export class Comments extends React.Component
       {
         await this.loadCommentFromAPI();
       }
+    }
+    handleInputChange(event) 
+    {
+      const target = event.target;
+      const value = target.value;
+      const name = target.name;
+  
+      this.setState({
+        [name]: value
+      });
+    }
+    async writeComment(event)
+    {
+      event.preventDefault();
+      if (this.state.isLoadingSmall)
+      {
+        return;
+      }
+      this.setState({isLoadingSmall: true, writeCommentSuccess: null, writeCommentFail: null});
+      let token = await getToken();
+      const data = {
+        "text": this.state.writeComment
+      }
+      const response = await fetch(API_URL+"ads/" + this.props.adId + "/comments/", {
+        mode: 'cors',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer " + token
+        },
+        body: JSON.stringify(data)
+      });
+      if (response.status === 201)
+      {
+        //let body = await response.json();
+        await this.loadCommentFromAPI(true);
+        this.setState({writeCommentSuccess: "Komentaras pridėtas", isLoadingSmall: false, writeComment: ""});
+      }
+      else
+      {
+        this.setState({writeCommentFail: "Nežinoma klaida, mėginkite dar kartą", isLoadingSmall: false});
+      }
+
     }
     setPage = async (number, moveToTop) =>
     {
@@ -31,10 +80,20 @@ export class Comments extends React.Component
           }
         }
     }
-    async loadCommentFromAPI()
+    async loadCommentFromAPI(reload)
     {
+      this.setState({isLoading:true});
+      let page;
+      if (reload)
+      {
+        page = 1;
+      }
+      else
+      {
+        page = this.state.activePage;
+      }
       const data = {
-        "page": 1,
+        "page": page,
         "limit": 10
       }
       const response = await fetch(API_URL+"ads/" + this.props.adId + "/comments/?actualMethod=GET/", {
@@ -49,17 +108,16 @@ export class Comments extends React.Component
       {
         let body = await response.json();
         let items = [];
-        var i;
+        let i;
         for (i = 0; i < body.comments.length; i++)
         {
           let key = i;
           let commentData = body.comments[key];
           let dataComment = {user_id: commentData.user_id, adId: commentData.ad_id, date: commentData.date, text: commentData.text, comment_id: commentData.comment_id, 
-          name: commentData.name};
-          items.push(dataComment);
-          
+          username: commentData.username, idOwner: commentData.idowner};
+          items.push(dataComment);          
         }
-        this.setState({comments: items, isLoading: false, pageCount: Math.ceil(body.totalCount/10)});
+        this.setState({activePage: page, comments: items, isLoading: false, pageCount: Math.ceil(body.totalCount/10), totalCount: body.totalCount});
       }
       else
       {
@@ -70,67 +128,58 @@ export class Comments extends React.Component
     {   
         let content = null
         let comments = null;
+        let role = isLoggedIn();
         if (!this.state.isLoading)
         {
             comments = [];
-            let i;
+            
             if (this.state.comments)
             {
+              let i;
               for (i = 0; i < this.state.comments.length; i++)
               {
                 let key = i;
                 let commentData = this.state.comments[key];
-                comments.push(<Comment key ={key} content={commentData}/>);
+                comments.push(<Comment key ={commentData.comment_id} content={commentData} user_id={loginContext.id} role={role} updateParent={this.loadCommentFromAPI}/>);
               }
             }
             content =<div>             
                       <div className="container">
                       <div className="col">
-                        <h1>Komentarai({comments.length})</h1>
+                        <h1>Komentarai({this.state.totalCount})</h1>
+                        { role !== 0 &&
+                        <Card className="mt-4 mb-4" >
+                          <Form className="m-4" onSubmit={this.writeComment}>
+                            
+                            <Form.Group controlId="writecommentForm">
+                              <Form.Control name="writeComment" as="textarea" rows={3} required maxLength="300" placeholder="Komentaro tekstas" value={this.state.writeComment} onChange={this.handleInputChange}/>
+                            </Form.Group>
+                            {this.state.writeCommentSuccess &&
+                              <div className="alert alert-success" role="alert">
+                                {this.state.writeCommentSuccess}
+                              </div>
+                            }
+                            {this.state.writeCommentFail &&
+                              <div className="alert alert-danger" role="alert">
+                                {this.state.writeCommentFail}
+                              </div>
+                            }
+                            
+                            <Button variant="primary" type="submit">
+                              Komentuoti
+                            </Button>
+                            {this.state.isLoadingSmall &&
+                            <div id="smallLoader"></div>
+                            }
+
+                          </Form>
+                        </Card>
+                        }
                         { this.state.comments && <div>
                         <PagingElement moveToTop={false} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
-                      <Card className="mt-4">
-                        <Card.Header>
-                          Valdas
-                          <div style={{"float":"right"}}>
-                          <Button variant="primary" size="sm">
-                            Redaguoti
-                          </Button>
-                          {' '}
-                          <Button variant="primary" size="sm" >
-                            Ištrinti
-                          </Button>
-                          </div>
-                          </Card.Header>
-                        <Card.Body>
-                          <Card.Title>Special title treatment</Card.Title>
-                          <Card.Text>
-                            With supporting text below as a natural lead-in to additional content.
-                          </Card.Text>
-                          <Button variant="primary">Go somewhere</Button>
-                        </Card.Body>
-                      </Card>
-                      <Card className="mt-4">
-                        <Card.Header>
-                          Valdas
-                          <div style={{"float":"right"}}>
-                          <Button variant="primary" size="sm">
-                            Redaguoti
-                          </Button>
-                          {' '}
-                          <Button variant="primary" size="sm" >
-                            Ištrinti
-                          </Button>
-                          </div>
-                          </Card.Header>
-                        <Card.Body>
-                          <Card.Title>Special title treatment</Card.Title>
-                          <Card.Text>
-                            With supporting text below as a natural lead-in to additional content.
-                          </Card.Text>
-                          <Button variant="primary">Go somewhere</Button>
-                        </Card.Body>
-                      </Card>
+                        
+                      {comments}
+
                       <div className="mt-4"></div>
                       <PagingElement moveToTop={false} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
                       </div>
@@ -160,14 +209,142 @@ export class Comments extends React.Component
 
 class Comment extends React.Component
 {
+    constructor(props)
+    {
+      super(props);
+      this.state = {content: this.props.content, confirmationModal: null, updateCommentModal: null};
+    }
+
+    tryToDelete = () =>
+    {
+      this.setState({confirmationModal: <ConfirmationModal button1Name="Atšaukti" button2Name="Ištrinti" text="Ištrynus, komentaro atkurti negalima" header="Ar tikrai norite ištrinti komentarą?" onButton1Click={this.delete} onButton2Click={this.hideConfirmation}/>})
+    }
+
+    hideConfirmation = () =>
+    {
+      this.setState({confirmationModal: null});
+    }
+
+    delete = async () =>
+    {
+      //this.setState({confirmationModal: null});
+      let token = await getToken();
+      const response = await fetch(API_URL+"ads/" + this.state.content.adId + "/comments/" + this.state.content.comment_id + "/",
+      {
+        mode: 'cors',
+        method: 'DELETE',
+        headers: {
+          'Authorization': "Bearer " + token
+        }// body data type must match "Content-Type" header
+        
+        });
+        if (response.status === 200)
+        {
+            this.hideConfirmation();
+            this.props.updateParent(true);
+        }
+    }
+
+    updateComment = async (commentText) =>
+    {
+      const data = {
+        "text": commentText
+      }
+      let token = await getToken();
+      const response = await fetch(API_URL+"ads/" + this.state.content.adId + "/comments/" + this.state.content.comment_id + "/", {
+          mode: 'cors',
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': "Bearer " + token
+          },
+          body: JSON.stringify(data) // body data type must match "Content-Type" header
+      });
+      if (response.status === 200)
+      {
+          let commentData = await response.json();
+          console.log(commentData);
+          let dataComment = {user_id: commentData.user_id, adId: commentData.ad_id, date: commentData.date, text: commentData.text, comment_id: commentData.comment_id, 
+            username: commentData.username, idOwner: commentData.idowner};
+          this.setState({content: dataComment, updateCommentModal: null});
+      }
+      else
+      {
+          this.setState({updateCommentModal: null});
+      }
+    }
+    tryToUpdate = () =>
+    {
+      this.setState({updateCommentModal: <UpdateComment commentText={this.state.content.text} onButton1Click={this.updateComment} onButton2Click={this.hideUpdateModal}/>});
+    }
+    hideUpdateModal = () =>
+    {
+      this.setState({updateCommentModal: null});
+    }
+
     render()
     {
+      let comment = this.state.content;
+      let role = this.props.role;
+      let user_id = this.props.user_id;
+      let button1 = null;
+      let button2 = null;
+      let buttonSeparator = ' ';
+      let isOwner = "";
+      if (parseInt(user_id) === parseInt(comment.user_id))
+      {
+        button1 =   <Button variant="primary" size="sm" onClick={this.tryToUpdate}>
+                      Redaguoti
+                    </Button>
+        button2 = <Button variant="primary" size="sm" onClick={this.tryToDelete}>
+                      Ištrinti
+                    </Button>
+      }
+      else if (role === 2)
+      {
+        button2 = <Button style={{"float":"right"}} variant="primary" size="sm" onClick={this.tryToDelete}>
+                    Ištrinti
+                  </Button>
+        buttonSeparator = null;
+      }
+      console.log(comment.idOwner);
+      console.log(comment.user_id);
+      if (parseInt(comment.idOwner) === parseInt(comment.user_id))
+      {
+        isOwner = " (savininkas)";
+      }
       return(
-        <tr>
-          <td>
-            Tai yra komentaras {this.props.content.comment_id}
-          </td>
-        </tr>
+        <Card className="mt-4">
+          {this.state.confirmationModal}
+          {this.state.updateCommentModal}
+          <Card.Header>
+        
+            <div>
+              
+              <div style={{"float":"right"}}>             
+                <div>
+                  <div>
+                  {button1}
+                  {buttonSeparator}
+                  {button2}
+                  </div>
+                  <div>
+                  {comment.date}
+                  </div>
+                </div>
+              </div>
+              {comment.username + isOwner}
+            </div>
+            
+            </Card.Header>
+          <Card.Body>
+            
+            <Card.Text>
+            {comment.text}
+            </Card.Text>
+
+          </Card.Body>
+        </Card>
       );
     }
 }

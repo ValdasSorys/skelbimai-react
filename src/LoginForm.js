@@ -63,7 +63,6 @@ export class LoginForm extends React.Component {
       {
         this.setState({error: "Kritinė klaida", isLoading: false});
       }
-      //this.setState({redirect: "/loginAction", params: {username: this.state.username, id: this.state.id}});
     }
     logout()
     {
@@ -134,8 +133,7 @@ export class LoginForm extends React.Component {
                       this.state.isLoading &&
                     <div id="smallLoader"></div>
                     }
-                  </Form>
-                  
+                  </Form>                  
                   </div>
                 </div>
       }

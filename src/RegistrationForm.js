@@ -116,7 +116,7 @@ export class RegistrationForm extends React.Component {
 
                     <Form.Group controlId="formBasicPhone">
                       <Form.Label>Telefono numeris:</Form.Label>
-                      <Form.Control  pattern={REGEXNUMBER} title="Turi būti naudojami tik skaičiai" name="phone" type="text" required="required" minLength="6" maxLength="50" placeholder="Tel. nr." value={this.state.phone} onChange={this.handleInputChange} />
+                      <Form.Control  pattern={REGEXNUMBER} title="Turi būti naudojami tik skaičiai" name="phone" type="text" required="required" minLength="6" maxLength="20" placeholder="Tel. nr." value={this.state.phone} onChange={this.handleInputChange} />
                     </Form.Group>
 
                     {errorMessage}

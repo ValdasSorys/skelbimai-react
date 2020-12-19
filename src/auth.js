@@ -111,7 +111,16 @@ async function getTokenFromServer(isAdmin)
       let body = await responseUserInfo.json();
       window.localStorage.setItem("username", body.username);
       window.localStorage.setItem("id", body.id);
-      window.localStorage.setItem("role", body.role);
+      if (isAdmin)
+      {
+        window.localStorage.setItem("role", "admin");
+      }
+      else
+      {
+        window.localStorage.setItem("role", "user");
+      }
+
+      
       window.localStorage.setItem("date", currentDate);
     }
     else

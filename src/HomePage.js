@@ -18,7 +18,8 @@ export class HomePage extends React.Component {
     this.setState({tokenValue: token + "/" + String(token2.scope)});
   }
   render()
-  {     
+  {
+    document.title = "Skelbimai";     
     return (      
         <div>
         <h1>Pagrindinis puslapis</h1>
