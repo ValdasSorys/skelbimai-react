@@ -20,6 +20,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { Navbar, Nav } from 'react-bootstrap';
 import './index.css';
 import './smallLoader.css';
+import './comments.css';
 import { RegistrationForm } from './RegistrationForm';
 //import * as constants from './constants'
 
@@ -173,7 +174,9 @@ class App extends React.Component {
       <article>    
       <Router>
           {header}
+          <div className="bodypage">
           {routerElement}
+          </div>
           {footer}
       </Router>
       </article> 
@@ -241,6 +244,7 @@ class Header extends React.Component {
               </Nav>
     }
     return(
+      <header>
       <Navbar id="header" sticky="top" collapseOnSelect expand="lg" bg="primary" variant="dark">
       <Navbar.Brand>Skelbimai</Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -249,6 +253,7 @@ class Header extends React.Component {
       {navbarRight}
       </Navbar.Collapse>
       </Navbar>
+      </header>
     );
   }
 }

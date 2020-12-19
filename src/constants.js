@@ -4,4 +4,7 @@ export const REGEXWORD = '[A-Za-ząčęėįšųūžĄČĘĖĮŠŲŪŽ,@.()?!/" "
 export const REGEXUSERNAME = '[A-Za-ząčęėįšųūžĄČĘĖĮŠŲŪŽ0-9]+'
 export const REGEXNAME = '[A-Za-ząčęėįšųūžĄČĘĖĮŠŲŪŽ0-9]+'
 export const REGEXNUMBER = '[0-9]+'
-export const REGEXEMAILCHAR = '[A-Za-ząčęėįšųūžĄČĘĖĮŠŲŪŽ0-9@.]+'
+//eslint-disable-next-line
+export const REGEXEMAILCHAR = '[A-Za-ząčęėįšųūžĄČĘĖĮŠŲŪŽ0-9]+@[A-Za-ząčęėįšųūžĄČĘĖĮŠŲŪŽ0-9]+\.[A-Za-ząčęėįšųūžĄČĘĖĮŠŲŪŽ0-9]+'
+//eslint-disable-next-line
+export const REGEXPRICE = '[0-9]+(\.[0-9][0-9]?)?';

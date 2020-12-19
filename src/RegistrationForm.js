@@ -1,7 +1,7 @@
 import React from 'react';
 import {isLoggedIn} from './auth'
 import { Form, Button } from 'react-bootstrap';
-import {API_URL, REGEXWORD, REGEXNAME, REGEXUSERNAME, REGEXNUMBER, REGEXEMAILCHAR} from './constants'
+import {API_URL, REGEXNAME, REGEXUSERNAME, REGEXNUMBER, REGEXEMAILCHAR} from './constants'
 import {
     Redirect
   } from "react-router-dom";
@@ -18,6 +18,10 @@ export class RegistrationForm extends React.Component {
     async register(event)
     {
         event.preventDefault();
+        if (this.state.isLoading === true)
+        {
+          return;
+        }
         this.setState({isLoading: true});
         const data = {
           "username": this.state.username,
@@ -74,6 +78,7 @@ export class RegistrationForm extends React.Component {
           return <Redirect to={redirect} />
         }
       }
+
       let form;
       let errorMessage = null
       if (this.state.error && !this.state.isLoading)

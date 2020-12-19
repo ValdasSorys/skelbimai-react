@@ -77,13 +77,14 @@ export class PagingElement extends React.Component
         return items;
     }
     render()
-  { 
-    let pagingElements = this.generatePagination(this.props.pageCount);  
+    { 
+    let pagingElements = this.generatePagination(this.props.pageCount);
+    let stylePaging={"margin": "0 auto", "display": "table", "height": "38px", "textOverflow": "ellipsis"};
     return (
-        <div style={{"margin": "0 auto", "display": "table", "height": "38px", "textOverflow": "ellipsis"}}>
-        <Pagination style={{"height":"0px"}}>
-        {pagingElements}
-        </Pagination>
+        <div style={stylePaging}>
+            <Pagination style={{"height":"0px"}}>
+                {pagingElements}
+            </Pagination>
         </div> 
     );
   }

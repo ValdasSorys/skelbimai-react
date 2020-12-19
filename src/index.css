@@ -76,9 +76,6 @@ html {
   padding-bottom: 20px;
 }
 
-footer {
-  font-family: "Sofia", sans-serif;
-}
 
 .animated-login {
   animation: fadeIn 0.25s forwards;
@@ -124,16 +121,18 @@ table.entryElement
 {
   margin-top: 15px;
   margin-bottom: 15px;
+
 }
 table.entryElement tr td
 {
   vertical-align: top; 
   border-top: 1px solid #9acffe;
   border-bottom: 1px solid #9acffe;
+  margin-bottom: 15px;
 }
 table.entryElement tr
 {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 td.entryFirst
 {  
@@ -188,5 +187,58 @@ div.entryDetails
   overflow: hidden;
   text-overflow: ellipsis;  
   font-size: 15px;
+}
+.title {
+ 
+  margin-bottom: 50px;
+  text-transform: uppercase;
+}
+
+.card-block {
+  min-width: 100%;
+  font-size: 1em;
+  position: relative;
+  margin: 0;
+  padding: 1em;
+  border: none;
+  border-top: 1px solid rgba(34, 36, 38, .1);
+  box-shadow: none;
+   
+}
+.card {
+  font-size: 1em;
+  overflow: hidden;
+  padding: 5;
+  border: none;
+  border-radius: .28571429rem;
+  box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
+  margin-top: 0px;
+}
+
+.ellipsisText{
+  white-space: nowrap;
+  width: 100%; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+
+footer {
+  font-family: "Sofia", sans-serif;
+}
+
+/*header {
+  font-family: "Sofia", sans-serif;
+}
+
+div.bodypage{
+  font-family: "Sofia", sans-serif;
+}*/
+
+.wrap {
+  display: flex;
+}
+
+.wrap.wrapBottom {
+  align-self: flex-end;
 }
 

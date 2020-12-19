@@ -1,7 +1,10 @@
 import React from 'react';
+import {isLoggedIn, loginContext, getToken} from './auth'
 import {Comments} from './Comments'
 import {ConfirmationModal} from './ConfirmationModal'
 import {API_URL} from './constants'
+import {CreateAd} from './createAd'
+import {UpdateAdModal} from './updateAd'
 import {
     Link,
     Switch,
@@ -9,14 +12,24 @@ import {
     Redirect
   } from "react-router-dom";
 import {PagingElement} from './Paging';
-import {Modal, Button} from 'react-bootstrap';
+import {Modal, Button, Form} from 'react-bootstrap';
 export class Ads extends React.Component
 {
     constructor(props)
     {
         super(props);
+        let onlyRoutingVar = null;
+        if (this.props.location.pathname === "/ads" || this.props.location.pathname === "/ads/")
+        {
+          onlyRoutingVar = false;
+        }
+        else
+        {
+          onlyRoutingVar =true;
+        }
         this.state = {activePage: 1, pageCount: 1, showFiltering: false, 
-          ads: null, role: this.props.role};
+          ads: null, role: this.props.role, onlyRouting: onlyRoutingVar};
+        
     }
     async componentDidMount() {
       if (this.props.location.pathname === "/ads" || this.props.location.pathname === "/ads/")
@@ -25,7 +38,11 @@ export class Ads extends React.Component
         await this.loadAdsFromAPI();    
       }   
     }
-
+    reload = async () =>
+    {
+      this.setState({onlyRouting: false, ads: null});
+      await this.loadAdsFromAPI();  
+    }
     loadAdsFromAPI = async () =>
     {
         const data = {
@@ -34,7 +51,6 @@ export class Ads extends React.Component
         "sortby": "date",
         "sortorder": "DESC"
       }
-      console.log(JSON.stringify(data));
       const response = await fetch(API_URL+"ads/?actualMethod=GET/", {
         mode: 'cors',
         method: 'POST',
@@ -81,6 +97,14 @@ export class Ads extends React.Component
 
     render()
   {
+    let unAllowedRoutes = null;
+    if (isLoggedIn() === 0)
+    {
+      unAllowedRoutes = [];
+      unAllowedRoutes.push(<Route key={0} exact path="/ads/create/">
+                            <Redirect to="/403" />
+                          </Route>);
+    }
     let match = this.props.match;
     let adList = null;
     if (this.state.ads)
@@ -96,13 +120,13 @@ export class Ads extends React.Component
     let extraButtons = "";
     if (this.state.role === 0)
     {
-      extraButtons = <div>
+      extraButtons = <div className="mb-2">
                       <button onClick={this.handleShow} type="button" className="btn btn-primary">Filtravimas</button>
                     </div>
     }
     else if (this.state.role === 1 || this.state.role === 2)
     {
-      extraButtons = <div>
+      extraButtons = <div className="mb-2">
                         <button onClick={this.handleShow} type="button" className="btn btn-primary mr-1">Filtravimas</button>
                       <Link to="/ads/create">                        
                         <button type="button" className="btn btn-primary">Kurti skelbimą</button>
@@ -112,18 +136,44 @@ export class Ads extends React.Component
     return (      
       <div className="elementContainer">
       <Switch>
-          <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<Ad detailed = {true} {...props}/>)}>
+          
+          {this.state.onlyRouting ?
+          <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<Ad reloadParentOnOnmount={true} reload={this.reload} detailed = {true} {...props}/>)}>
+          </Route>:
+          <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<Ad reloadParentOnOnmount={false} reload={this.reload} detailed = {true} {...props}/>)}>
           </Route>
+          }
+
           <Route exact path="/ads">
-            <h1>Skelbimai</h1>
+            
             {this.state.ads ?
             <div>
-            {extraButtons}
+
             <Modal show={this.state.showFiltering} onHide={this.handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>Modal heading</Modal.Title>
             </Modal.Header>
-            <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+            <Modal.Body>
+
+            <Form>
+                    <Form.Group controlId="formBasicUsername">
+                      <Form.Label>Vartotojo vardas:</Form.Label>
+                      <Form.Control name="username" type="username" placeholder="Slapyvardis" maxLength="20" required="required" value={this.state.username} onChange={this.handleInputChange} />
+                    </Form.Group>
+                  
+                    <Form.Group controlId="formBasicPassword">
+                      <Form.Label>Slaptažodis</Form.Label>
+                      <Form.Control name="password" type="password" maxLength="50" required="required" placeholder="Slaptažodis" value={this.state.password} onChange={this.handleInputChange}/>          
+                    </Form.Group>
+                    <Button variant="primary" type="submit">
+                      Prisijungti
+                    </Button>
+                    {
+                      this.state.isLoading &&
+                    <div id="smallLoader"></div>
+                    }
+                  </Form>
+            </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={this.handleClose}>
                 Close
@@ -133,20 +183,28 @@ export class Ads extends React.Component
               </Button>
             </Modal.Footer>
           </Modal>
-          <div style={{"height": "15px"}}></div>
-          <div style={{"display": "inline-block"}}>
-          <PagingElement moveToTop={false} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
 
-            <table className="entryElement">
-            <tbody>
-            {adList}
-            </tbody>
-            </table>
-            
-          <PagingElement moveToTop={true} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
+          
+
+          <div > 
+            <div className="container">
+            <div className="row">
+            <h1>Skelbimai</h1>
+            </div>
+            <div className="row">
+            {extraButtons}   
+            </div></div>     
+            <PagingElement moveToTop={false} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
+                {adList}       
+            <PagingElement moveToTop={true} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/> 
           </div>
+
         </div> : <div id="loader"></div>
           }
+          </Route>
+          {unAllowedRoutes}
+          <Route exact path="/ads/create/" >
+            <CreateAd/>
           </Route>
           <Route path="/">
           <Redirect to="/404" />
@@ -160,18 +218,22 @@ export class Ads extends React.Component
 class Ad extends React.Component
 {
   constructor(props)
-  {
+  {    
     super(props);
     let data = null;
-    if (this.props.location && this.props.location.state)
+    let reloadParentVar = false;
+    if (this.props.location && this.props.location.state && this.props.location.state.dataAd)
     {
-      data = this.props.location.state;
-    }
+      data = this.props.location.state.dataAd;
+    }    
     else if (this.props.data)
     {
       data = this.props.data;
     }
-    this.state = { confirmationModal: "", text: "", ad : data}   
+    this.state = { confirmationModal: "", text: "", ad : data, adDeleted: false, reloadParent: reloadParentVar, updateAdModal: null}   
+    this.onAdUpdate = this.onAdUpdate.bind(this);
+    this.hideUpdateAdModal = this.hideUpdateAdModal.bind(this);
+    this.showUpdateAdModal = this.showUpdateAdModal.bind(this);
   }
   async componentDidMount() {
     window.scroll({top: 0, left: 0, behavior: 'smooth' })
@@ -180,6 +242,20 @@ class Ad extends React.Component
       await this.loadAdFromAPI();
     }
   } 
+  componentWillUnmount(){
+    if (this.props.reloadParentOnOnmount)
+    {
+      this.props.reload();
+    }
+    else if (this.state.adDeleted || this.state.reloadParent)
+    {
+      this.props.reload();
+    }
+    else if (this.props.location && this.props.location.state && this.props.location.state.reloadParent)
+    {
+      this.props.reload();
+    }
+  }
   loadAdFromAPI = async () =>
     {
       const response = await fetch(API_URL+"ads/" + this.props.match.params.id + "/", {
@@ -195,79 +271,176 @@ class Ad extends React.Component
         let dataAd = {adId: adData.id, ownerId: adData.user_id, owner: adData.username, name: adData.name, date: adData.date, 
         text: adData.text, 
         categoryId: adData.category, categoryName: adData.categoryname, price: adData.price, email: adData.email, phone: adData.phone};
-        this.setState({ad: dataAd, dataFetched: true});
+        this.setState({ad: dataAd});
+        /*this.props.history.replace({
+          pathname: '/ads/' + dataAd.adId,
+          state: {dataAd: dataAd}
+        });*/
       }
     }
-  showConfirmation = () => 
+  
+  tryToDelete = () =>
   {
-    let modal = <ConfirmationModal button1Name={"Atšaukti"} button2Name={"Patvirtinti"} text={""} header={"Ar tikrai norite kažką padaryti?"} onButton1Click={this.action1} onButton2Click={this.action2}/>
-    this.setState({confirmationModal: modal});
+    //this.state = {show: true, button1Name: this.props.button1Name, button2Name: this.props.button2Name, 
+    //text: this.props.text, header: this.props.header, onButtonClick: this.props.onButtonClick};
+    this.setState({confirmationModal: <ConfirmationModal button1Name="Atšaukti" button2Name="Ištrinti" text="Ištrynus, skelbimo atkurti negalima" header="Ar tikrai norite ištrinti skelbimą?" onButton1Click={this.delete} onButton2Click={this.hideConfirmation}/>})
   }
-  action1 = () =>
+  hideConfirmation = () =>
   {
-    this.setState({confirmationModal: "", text: "Cancelled"});
+    this.setState({confirmationModal: null});
   }
-  action2 = () =>
+  showUpdateAdModal()
   {
-    this.setState({confirmationModal: "", text: "Confirmed"});
+      let modal = <UpdateAdModal button1Name="Atšaukti" button2Name="Atnaujinti informaciją" header="Skelbimo informacijos atnaujinimas" onButton1Click={this.onAdUpdate} onButton2Click={this.hideUpdateAdModal} adData={this.state.ad}/>
+      this.setState({updateAdModal: modal});
   }
-    render()
+  hideUpdateAdModal()
   {
+      this.setState({updateAdModal: null});
+  }
+  onAdUpdate(newAdData)
+  {
+    this.props.history.replace({
+      pathname: '/ads/' + newAdData.adId,
+      state: {dataAd: newAdData}
+    });
+    this.setState({ad: newAdData, reloadParent: true, updateAdModal: null});
+  }
+  delete = async () =>
+  {
+    let token = await getToken();
+    const response = await fetch(API_URL+"ads/" + this.props.match.params.id + "/", {
+      mode: 'cors',
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer " + token
+      }
+    });
+    if (response.status === 200)
+    {
+      this.setState({adDeleted: true, confirmationModal: null});
+    }
+    else
+    {
+      this.setState({confirmationModal: null});
+    }
+  }
+  render()
+  {
+    if (this.state.adDeleted)
+    {
+      return <div>
+              <div class="alert alert-success" role="alert">
+                Skelbimas pašalintas
+              </div>
+            </div>
+    }
     let ad = this.state.ad;
     if (this.props.detailed === false)
     {
       return (
-            <tr>
-                    <td className="entryFirst">
-                    <div className="wrapper">
-                    <div style={{"fontSize": "12px"}}>Savininkas:<br></br>{ad.owner}</div>
-                    <div></div>
-                    <div style={{"fontSize": "12px", "marginTop": "5px"}}>{ad.date}</div>
+            <div className="container py-3">
+            <div className="card">
+              <div className="row ">
+                <div className="col-md-7 px-3" style={{"minWidth": "100%"}}>
+                  <div className="card-block px-6">
+                    <div style={{"color":"gray"}}>
+                      {ad.date}
                     </div>
-                    </td>
+                    <div style={{"color":"gray"}}>
+                      Kategorija: {ad.categoryName} 
+                    </div>
                     
-                    <td className="entrySecond">
-                    <div className="wrapper">
+                    <h4 className="card-title">{ad.name}</h4>
+                    <p className="card-text ellipsisText">
+                      {ad.text}
+                    </p>
+                    <br></br>
+                    <br></br>
+                  
+                    <div>
+                      <b>Kaina: {ad.price}€</b>
+                    </div>
+                    <div style={{"height": "3px"}}></div>
                     <Link to={{
                         pathname: "/ads/" + ad.adId,
-                        state: this.props.data
+                        state: {dataAd: this.state.ad}
                       }}>
-                    <div style={{"color": "#0275d8", "fontWeight": "550"}}>
-                        {ad.name}
-                    </div>
+                    <button className="mt-auto btn btn-primary ">Atidaryti</button>
                     </Link>
-                    <div className="entryDetails">
-                        {ad.text}
-                    </div>
-                    <div style={{"marginTop": "-20px"}}>
-                        {ad.price}€
-                        <div style={{"color": "gray", "fontSize": "15px"}}>
-                            Kategorija: {ad.categoryName}
-                        </div>
-                    </div>
-                    </div>
-                    </td>
-            </tr>
+                  </div>
+                </div>
+            </div>
+            </div>
+            </div>
       );
     }
     else
     {
+      let extraButtons = "";
+      let role = isLoggedIn();
+      if (this.state.ad)
+      {
+        if (role === 2 || parseInt(loginContext.id) === ad.ownerId)
+        {
+          extraButtons = <div style={{"float":"right"}}>
+
+                          <button onClick={this.tryToDelete} type="button" className="btn btn-primary mr-1 mb-2">Ištrinti</button>
+                          <button onClick={this.showUpdateAdModal} type="button" className="btn btn-primary mb-2">Redaguoti</button>
+
+                        </div>
+        }
+      }
       return (
-        <div className="elementContainer">        
+        
+<div className="elementContainer">        
         {
           this.state.ad ?
           <div>
-          <p>{ad.date}</p> 
-          <h2>{ad.name}</h2>
-          <p>Savininkas:<br></br>{ad.owner}</p>              
-          
-          <p>{ad.text}</p>
-          <p>{ad.price}€</p>
-          <p>{ad.email}</p>
-          <p>{ad.phone}</p>
-          <p>Kategorija: {ad.categoryName}</p>
-          <Comments adId ={ad.adId}/>
-          </div> : <div id="loader"></div>
+            {this.state.updateAdModal}
+            {this.state.confirmationModal}
+            
+            <div className="container py-3">
+            <div className="card">
+              
+              <div className="row ">
+                
+                <div className="col-md-7 px-3" style={{"minWidth": "100%"}}>
+                  
+                  <div className="card-block px-6">
+                    <div>
+                    {extraButtons}
+                    <div>
+                    <div style={{"color":"gray", "whiteSpace": "nowrap", "float": "left"}}>
+                      {ad.date}<br></br>
+                      Kategorija: {ad.categoryName} 
+                    </div>
+                    <br style={{"clear":"both"}} />
+                    </div>
+                    </div>
+                    
+                    
+                    <h4 className="card-title">{ad.name}</h4>
+                    <p className="card-text">
+                      {ad.text}
+                    </p>
+                    <br></br>
+                    <br></br>
+                  
+                    <div>
+                      <b>Kaina: {ad.price}€</b><br></br>
+                      <b>El. paštas: {ad.email}</b><br></br>
+                      <b>Telefono nr.: {ad.phone}</b>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            </div>
+            </div>
+            <Comments adId ={ad.adId}/>
+          </div>
+           : <div id="loader"></div>
           
         }
         </div>

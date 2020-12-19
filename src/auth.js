@@ -69,7 +69,6 @@ async function getTokenFromServer(isAdmin)
 {
   let currentDate = new Date().getTime();
   let scope = "";
-  console.log(isAdmin);
   if (isAdmin)
   {
     scope = 'ads+comments+ads_admin+comments_admin+categories_admin+user_admin';
@@ -92,8 +91,6 @@ async function getTokenFromServer(isAdmin)
     if (response.status === 200)
     {
       let body = await response.json();
-      console.log(body);
-      console.log(jwt_decode(body.access_token));
       window.localStorage.setItem("token", body.access_token);
       window.localStorage.setItem("expires_in", body.expires_in);
     }
@@ -112,7 +109,6 @@ async function getTokenFromServer(isAdmin)
     if (responseUserInfo.status === 200)
     {
       let body = await responseUserInfo.json();
-      console.log(body);
       window.localStorage.setItem("username", body.username);
       window.localStorage.setItem("id", body.id);
       window.localStorage.setItem("role", body.role);

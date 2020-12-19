@@ -52,7 +52,6 @@ export class LoginForm extends React.Component {
         let result = await login(this.props.updateApp, this.props.isAdmin);
         if (result !== 200)
         {
-          console.log(result);
           this.setState({error: "Neturite tinkamų privilegijų", isLoading: false});
         }
       }

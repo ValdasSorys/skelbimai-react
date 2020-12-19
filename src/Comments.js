@@ -1,7 +1,7 @@
 import React from 'react';
 import {API_URL} from './constants'
 import {PagingElement} from './Paging';
-
+import {Modal, Button, Form, ListGroup, ListGroupItem, Media, Card} from 'react-bootstrap';
 export class Comments extends React.Component
 {
   constructor(props)
@@ -37,7 +37,6 @@ export class Comments extends React.Component
         "page": 1,
         "limit": 10
       }
-      console.log(JSON.stringify(data));
       const response = await fetch(API_URL+"ads/" + this.props.adId + "/comments/?actualMethod=GET/", {
         mode: 'cors',
         method: 'POST',
@@ -73,43 +72,83 @@ export class Comments extends React.Component
         let comments = null;
         if (!this.state.isLoading)
         {
-          if (this.state.comments)
-          {
             comments = [];
             let i;
-            for (i = 0; i < this.state.comments.length; i++)
+            if (this.state.comments)
             {
-              let key = i;
-              let commentData = this.state.comments[key];
-              comments.push(<Comment key ={key} content={commentData}/>);
+              for (i = 0; i < this.state.comments.length; i++)
+              {
+                let key = i;
+                let commentData = this.state.comments[key];
+                comments.push(<Comment key ={key} content={commentData}/>);
+              }
             }
-            content =
-                  <div style={{"display": "inline-block"}}>
-                    <h1>Komentarai</h1>
-                    <PagingElement moveToTop={false} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
-                     <table>
-                        <tbody>
-                          {comments}
-                        </tbody> 
-                      </table>
-                    <PagingElement moveToTop={false} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
-                  </div>
-          }
-          else
-          {
-            content = <div>
-            <h1>Komentarai</h1>
-             <p>Komentarų nėra</p>
-            </div>
-          }
-
-          
+            content =<div>             
+                      <div className="container">
+                      <div className="col">
+                        <h1>Komentarai({comments.length})</h1>
+                        { this.state.comments && <div>
+                        <PagingElement moveToTop={false} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
+                      <Card className="mt-4">
+                        <Card.Header>
+                          Valdas
+                          <div style={{"float":"right"}}>
+                          <Button variant="primary" size="sm">
+                            Redaguoti
+                          </Button>
+                          {' '}
+                          <Button variant="primary" size="sm" >
+                            Ištrinti
+                          </Button>
+                          </div>
+                          </Card.Header>
+                        <Card.Body>
+                          <Card.Title>Special title treatment</Card.Title>
+                          <Card.Text>
+                            With supporting text below as a natural lead-in to additional content.
+                          </Card.Text>
+                          <Button variant="primary">Go somewhere</Button>
+                        </Card.Body>
+                      </Card>
+                      <Card className="mt-4">
+                        <Card.Header>
+                          Valdas
+                          <div style={{"float":"right"}}>
+                          <Button variant="primary" size="sm">
+                            Redaguoti
+                          </Button>
+                          {' '}
+                          <Button variant="primary" size="sm" >
+                            Ištrinti
+                          </Button>
+                          </div>
+                          </Card.Header>
+                        <Card.Body>
+                          <Card.Title>Special title treatment</Card.Title>
+                          <Card.Text>
+                            With supporting text below as a natural lead-in to additional content.
+                          </Card.Text>
+                          <Button variant="primary">Go somewhere</Button>
+                        </Card.Body>
+                      </Card>
+                      <div className="mt-4"></div>
+                      <PagingElement moveToTop={false} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
+                      </div>
+                        }
+                      </div>
+                      </div>
+                      
+                    </div>          
         }
         else
         {
           content = <div>
+            <div className="container">
+                      <div className="col">
                       <h1>Komentarai <div id="smallLoader"></div></h1>
-                    </div>
+                      </div>
+                      </div></div>
+                      
         }
         return (
           <div>
