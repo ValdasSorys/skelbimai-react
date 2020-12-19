@@ -10,10 +10,6 @@ import {UserEdit} from './UserEdit'
 import {Card, Button} from 'react-bootstrap'
 export class UserInfo extends React.Component
 {
-    constructor(props)
-    {
-      super(props);
-    }
     render()
     {
       document.title = "Vartotojo profilis";
@@ -66,6 +62,10 @@ class User extends React.Component
       {
         let body = await response.json();
         this.setState({user: body, isLoading: false});
+      }
+      else if (response.status === 404)
+      {
+        this.props.history.replace("/404");
       }
     }
     showEditModal = () =>
