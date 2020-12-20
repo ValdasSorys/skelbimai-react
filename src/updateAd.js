@@ -15,7 +15,6 @@ export class UpdateAdModal extends React.Component
             price: this.props.adData.price, 
             selectCategory: this.props.adData.categoryId};
         this.handleInputChange = this.handleInputChange.bind(this);
-        console.log(this.state);
     }
     handleInputChange(event) {
         const target = event.target;

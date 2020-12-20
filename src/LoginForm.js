@@ -96,7 +96,7 @@ export class LoginForm extends React.Component {
           return <Redirect to={redirect} />
         }
       }
-      let button;
+      let form;
       let errorMessage;
       if (this.state.error && !this.state.isLoading)
       {
@@ -113,7 +113,7 @@ export class LoginForm extends React.Component {
       }
       if (!this.state.isLoggedIn)
       {
-        button =  <div className="animated-login auth-wrapper">
+        form =  <div className="animated-login auth-wrapper">
                     <div className="auth-inner">
                     <Form onSubmit={this.login}>
                     {message}
@@ -140,11 +140,11 @@ export class LoginForm extends React.Component {
       }
       else
       {
-          button = <Redirect to="/"/>
+          form = <Redirect to="/"/>
       }
       return (
         <div>
-        {button}
+        {form}
         </div>
       );
     }

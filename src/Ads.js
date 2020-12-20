@@ -77,7 +77,6 @@ export class Ads extends React.Component
 
     loadAdsFromAPI = async () =>
     {
-      console.log(this.state.activePage);
         const data = {
         "page": this.state.activePage,
         "limit": 10,

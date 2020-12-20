@@ -189,10 +189,6 @@ class Category extends React.Component {
     {
       onFail("Kategoriją naudoja bent vienas skelbimas");
     }
-    else
-    {
-      console.log(response.status);
-    }
   }
   render()
   {
