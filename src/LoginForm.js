@@ -119,12 +119,12 @@ export class LoginForm extends React.Component {
                     {message}
                     <Form.Group controlId="formBasicUsername">
                       <Form.Label>Vartotojo vardas:</Form.Label>
-                      <Form.Control name="username" type="username" placeholder="Slapyvardis" maxLength="20" required="required" value={this.state.username} onChange={this.handleInputChange} />
+                      <Form.Control name="username" type="username" placeholder="Slapyvardis" minLength="6" maxLength="20" required="required" value={this.state.username} onChange={this.handleInputChange} />
                     </Form.Group>
                   
                     <Form.Group controlId="formBasicPassword">
                       <Form.Label>Slaptažodis</Form.Label>
-                      <Form.Control name="password" type="password" maxLength="50" required="required" placeholder="Slaptažodis" value={this.state.password} onChange={this.handleInputChange}/>          
+                      <Form.Control name="password" type="password" minLength="6" maxLength="50" required="required" placeholder="Slaptažodis" value={this.state.password} onChange={this.handleInputChange}/>          
                     </Form.Group>
                     {errorMessage}
                     <Button variant="primary" type="submit">

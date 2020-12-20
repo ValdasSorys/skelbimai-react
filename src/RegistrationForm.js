@@ -102,7 +102,7 @@ export class RegistrationForm extends React.Component {
                   
                     <Form.Group controlId="formBasicPassword">
                       <Form.Label>Slaptažodis</Form.Label>
-                      <Form.Control name="password" type="password" maxLength="50" required="required" placeholder="Slaptažodis" value={this.state.password} onChange={this.handleInputChange}/>          
+                      <Form.Control name="password" type="password" minLength="6" maxLength="50" required="required" placeholder="Slaptažodis" value={this.state.password} onChange={this.handleInputChange}/>          
                     </Form.Group>
 
                     <Form.Group controlId="formBasicName">
