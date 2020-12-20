@@ -10,7 +10,8 @@ export class Comments extends React.Component
   constructor(props)
   {
     super(props);
-    this.state = {comments: null, isLoading: true, isLoadingSmall: false, activePage: 1, pageCount: 1, totalCount: 0, writeComment: "", writeCommentSuccess: null, writeCommmentFail: null};
+    this.state = {comments: null, isLoading: true, isLoadingSmall: false, activePage: 1, pageCount: 1, totalCount: 0, 
+      writeComment: "", writeCommentSuccess: null, writeCommmentFail: null};
     this.handleInputChange = this.handleInputChange.bind(this);
     this.writeComment = this.writeComment.bind(this);
     this.loadCommentFromAPI = this.loadCommentFromAPI.bind(this);
@@ -113,16 +114,21 @@ export class Comments extends React.Component
         {
           let key = i;
           let commentData = body.comments[key];
-          let dataComment = {user_id: commentData.user_id, adId: commentData.ad_id, date: commentData.date, text: commentData.text, comment_id: commentData.comment_id, 
+          let dataComment = {user_id: commentData.user_id, adId: commentData.ad_id, date: commentData.date, 
+            text: commentData.text, comment_id: commentData.comment_id, 
           username: commentData.username, idOwner: commentData.idowner};
           items.push(dataComment);          
         }
-        this.setState({activePage: page, comments: items, isLoading: false, pageCount: Math.ceil(body.totalCount/10), totalCount: body.totalCount});
+        this.setState({activePage: page, comments: items, isLoading: false, pageCount: Math.ceil(body.totalCount/10), totalCount: body.totalCount, writeCommentSuccess: null});
       }
       else
       {
-        this.setState({isLoading: false});
+        this.setState({isLoading: false, writeCommentSuccess: null});
       }
+    }
+    onCommentUpdate = () =>
+    {
+      this.setState({writeCommentSuccess: null});
     }
     render()
     {   
@@ -140,7 +146,7 @@ export class Comments extends React.Component
               {
                 let key = i;
                 let commentData = this.state.comments[key];
-                comments.push(<Comment key ={commentData.comment_id} content={commentData} user_id={loginContext.id} role={role} updateParent={this.loadCommentFromAPI}/>);
+                comments.push(<Comment key ={commentData.comment_id} content={commentData} user_id={loginContext.id} role={role} onUpdate={this.onCommentUpdate} updateParent={this.loadCommentFromAPI}/>);
               }
             }
             content =<div>             
@@ -263,10 +269,10 @@ class Comment extends React.Component
       if (response.status === 200)
       {
           let commentData = await response.json();
-          console.log(commentData);
           let dataComment = {user_id: commentData.user_id, adId: commentData.ad_id, date: commentData.date, text: commentData.text, comment_id: commentData.comment_id, 
             username: commentData.username, idOwner: commentData.idowner};
           this.setState({content: dataComment, updateCommentModal: null});
+          this.props.onUpdate();
       }
       else
       {
@@ -296,19 +302,17 @@ class Comment extends React.Component
         button1 =   <Button variant="primary" size="sm" onClick={this.tryToUpdate}>
                       Redaguoti
                     </Button>
-        button2 = <Button variant="primary" size="sm" onClick={this.tryToDelete}>
+        button2 = <Button variant="danger" size="sm" onClick={this.tryToDelete}>
                       Ištrinti
                     </Button>
       }
       else if (role === 2)
       {
-        button2 = <Button style={{"float":"right"}} variant="primary" size="sm" onClick={this.tryToDelete}>
+        button2 = <Button style={{"float":"right"}} variant="danger" size="sm" onClick={this.tryToDelete}>
                     Ištrinti
                   </Button>
         buttonSeparator = null;
       }
-      console.log(comment.idOwner);
-      console.log(comment.user_id);
       if (parseInt(comment.idOwner) === parseInt(comment.user_id))
       {
         isOwner = " (savininkas)";

@@ -33,7 +33,6 @@ export class Header extends React.Component {
                 <Nav.Link onClick = {() => this.setActiveKey("/")} eventKey = "/" as = {Link} to="/">Pagrindinis puslapis</Nav.Link>
                 <Nav.Link onClick = {() => this.setActiveKey("/ads")} eventKey = "/ads" as = {Link} to="/ads">Skelbimai</Nav.Link>
                 <Nav.Link onClick = {() => this.setActiveKey("/categories")} eventKey = "/categories" as = {Link} to="/categories">Kategorijos</Nav.Link>
-                <Nav.Link onClick = {() => this.setActiveKey("/userslist")} eventKey = "/userslist" as = {Link} to="/userslist">Vartotojų sąrašas</Nav.Link>
                 </Nav>
               navbarRight = 
               <Nav className="ml-auto" activeKey={this.state.activeKey}>

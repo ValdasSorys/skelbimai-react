@@ -19,7 +19,8 @@ export class Ads extends React.Component
     {
         super(props);
         let onlyRoutingVar = null;
-        if (this.props.location.pathname === "/ads" || this.props.location.pathname === "/ads/")
+        let pathWithoutParams = this.props.location.pathname.split("?")[0];
+        if (pathWithoutParams === "/ads" || pathWithoutParams === "/ads/")
         {
           onlyRoutingVar = false;
         }
@@ -27,22 +28,51 @@ export class Ads extends React.Component
         {
           onlyRoutingVar =true;
         }
-        this.state = {activePage: 1, pageCount: 1, showFiltering: false, 
+
+        let activePageVar = 1;
+
+        let writtenPageVar = null;
+
+        const params = this.props.location.search;
+        const regex = /[?&]page=[0-9]+(&|$)/g;
+        const found = params.match(regex);
+        if (found && found.length > 0)
+        {
+          activePageVar = parseInt(found[0].replace("page", "").replace("&", "").replace("?", "").replace("=", ""));
+          writtenPageVar = activePageVar;
+          if (activePageVar < 1)
+          {
+            activePageVar = 1;
+          }
+        }
+        this.state = {activePage: activePageVar, writtenPage: writtenPageVar, pageCount: 1, showFiltering: false, 
           ads: null, role: this.props.role, onlyRouting: onlyRoutingVar};
+        
         
     }
     async componentDidMount() {
-      if (this.props.location.pathname === "/ads" || this.props.location.pathname === "/ads/")
+      this.props.showHF();
+      let pathWithoutParams = this.props.location.pathname.split("?")[0];
+
+      
+      if (pathWithoutParams === "/ads" || pathWithoutParams === "/ads/")
       {
+        const params = this.props.location.search;
+        const regex = /[?&]page=[0-9]+(&|$)/g;
+        const found = params.match(regex);
+        if (found && found.length > 0)
+        {
+          parseInt(found[0].replace("page", "").replace("&", "").replace("?", "").replace("=", ""));
+        }
+        if (this.state.activePage === 1 && this.state.writtenPage !== 1 || this.state.writtenPage === null)
+        {
+          this.props.history.replace("/ads?page=1");
+        }
         window.scroll({top: 0, left: 0, behavior: 'smooth' })
         await this.loadAdsFromAPI();    
       }   
     }
-    reload = async () =>
-    {
-      await this.setState({onlyRouting: false, ads: null});
-      await this.loadAdsFromAPI();  
-    }
+
     loadAdsFromAPI = async () =>
     {
         const data = {
@@ -62,18 +92,27 @@ export class Ads extends React.Component
       if (response.status === 200)
       {
         let body = await response.json();
-        let items = [];
-        var i;
-        for (i = 0; i < body.ads.length; i++)
+        if (body.totalCount > 0 && body.ads.length === 0)
         {
-          let key = i;
-          let adData = body.ads[key];
-          let dataAd = {adId: adData.id, ownerId: adData.user_id, owner: adData.username, name: adData.name, date: adData.date, 
-          text: adData.text, 
-          categoryId: adData.category, categoryName: adData.categoryname, price: adData.price, email: adData.email, phone: adData.phone};
-          items.push(dataAd)
+            this.props.history.replace("/ads?page=1");
+            await this.setState({activePage: 1, ads: null});
+            await this.loadAdsFromAPI();
         }
-        this.setState({pageCount: Math.ceil(body.totalCount/10), ads: items})
+        else
+        {
+          let items = [];
+          var i;
+          for (i = 0; i < body.ads.length; i++)
+          {
+            let key = i;
+            let adData = body.ads[key];
+            let dataAd = {adId: adData.id, ownerId: adData.user_id, owner: adData.username, name: adData.name, date: adData.date, 
+            text: adData.text, 
+            categoryId: adData.category, categoryName: adData.categoryname, price: adData.price, email: adData.email, phone: adData.phone};
+            items.push(dataAd)
+          }
+          this.setState({pageCount: Math.ceil(body.totalCount/10), ads: items})
+        }
       }
     }
     setPage = async (number, moveToTop) =>
@@ -82,14 +121,19 @@ export class Ads extends React.Component
         {
           if (number > 0 && number <= this.state.pageCount)
           {
+              this.props.history.replace("/ads?page=" + number);
               await this.setState({activePage: number, ads: null});
-              await this.loadAdsFromAPI(); 
+              await this.loadAdsFromAPI();
           }
           if (moveToTop)
           {
             window.scroll({top: 0, left: 0, behavior: 'smooth' })
           }
         }
+    }
+    getAds = () =>
+    {
+      return this.state.ads;
     }
 
     handleClose = () => this.setState({showFiltering: false});
@@ -119,16 +163,9 @@ export class Ads extends React.Component
       }
     }
     let extraButtons = "";
-    if (this.state.role === 0)
+    if (this.state.role === 1 || this.state.role === 2)
     {
       extraButtons = <div className="mb-2">
-                      <button onClick={this.handleShow} type="button" className="btn btn-primary">Filtravimas</button>
-                    </div>
-    }
-    else if (this.state.role === 1 || this.state.role === 2)
-    {
-      extraButtons = <div className="mb-2">
-                        <button onClick={this.handleShow} type="button" className="btn btn-primary mr-1">Filtravimas</button>
                       <Link to="/ads/create">                        
                         <button type="button" className="btn btn-primary">Kurti skelbimą</button>
                       </Link>
@@ -138,12 +175,8 @@ export class Ads extends React.Component
       <div className="elementContainer">
       <Switch>
           
-          {this.state.onlyRouting ?
-          <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<Ad reloadParentOnOnmount={true} reload={this.reload} detailed = {true} {...props}/>)}>
-          </Route>:
-          <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<Ad reloadParentOnOnmount={false} reload={this.reload} detailed = {true} {...props}/>)}>
+          <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<Ad detailed = {true} {...props}/>)}>
           </Route>
-          }
 
           <Route exact path="/ads">
             
@@ -219,23 +252,18 @@ class Ad extends React.Component
   {    
     super(props);
     let data = null;
-    let reloadParentVar = false;
     if (this.props.location && this.props.location.state && this.props.location.state.dataAd)
     {
       if (this.props.location.state.dataAd)
       {
         data = this.props.location.state.dataAd;
       }
-      if (this.props.location.state.reloadParent)
-      {
-        reloadParentVar = this.props.location.state.reloadParent;
-      }
     }    
     else if (this.props.data)
     {
       data = this.props.data;
     }
-    this.state = { confirmationModal: "", text: "", ad : data, adDeleted: false, reloadParent: reloadParentVar, updateAdModal: null, redirect: null, ignoreReload: false}   
+    this.state = { confirmationModal: "", text: "", ad : data, adDeleted: false, updateAdModal: null, redirect: null}   
     this.onAdUpdate = this.onAdUpdate.bind(this);
     this.hideUpdateAdModal = this.hideUpdateAdModal.bind(this);
     this.showUpdateAdModal = this.showUpdateAdModal.bind(this);
@@ -247,24 +275,6 @@ class Ad extends React.Component
       await this.loadAdFromAPI();
     }
   } 
-  componentWillUnmount(){
-    if (!this.props.detailed || this.state.ignoreReload)
-    {
-      return;
-    }
-    if (this.props.reloadParentOnOnmount)
-    {
-      this.props.reload();
-    }
-    else if (this.state.adDeleted || this.state.reloadParent)
-    {
-      this.props.reload();
-    }
-    /*else if (this.props.location && this.props.location.state && this.props.location.state.reloadParent)
-    {
-      this.props.reload();
-    }*/
-  }
   loadAdFromAPI = async () =>
     {
       const response = await fetch(API_URL+"ads/" + this.props.match.params.id + "/", {
@@ -313,14 +323,10 @@ class Ad extends React.Component
   }
   async onAdUpdate(newAdData)
   {    
-    await this.setState({ignoreReload: true});
     this.props.history.replace({
       pathname: '/ads/' + newAdData.adId,
-      state: {dataAd: newAdData, reloadParent: true}
-    });
-    
-    //this.setState({ad: newAdData, reloadParent: true, updateAdModal: null});
-    
+      state: {dataAd: newAdData}
+    });    
   }
   delete = async () =>
   {
@@ -341,6 +347,10 @@ class Ad extends React.Component
     {
       this.setState({confirmationModal: null});
     }
+  }
+  clearAd = () =>
+  {
+    this.props.history.replace("/ads/" + this.state.ad.adId);
   }
   render()
   {
@@ -422,8 +432,9 @@ class Ad extends React.Component
         {
           extraButtons = <div style={{"float":"right"}}>
 
-                          <button onClick={this.tryToDelete} type="button" className="btn btn-primary mr-1 mb-2">Ištrinti</button>
-                          <button onClick={this.showUpdateAdModal} type="button" className="btn btn-primary mb-2">Redaguoti</button>
+                          
+                          <button onClick={this.showUpdateAdModal} type="button" className="btn btn-primary mr-2 mb-2">Redaguoti</button>
+                          <button onClick={this.tryToDelete} type="button" className="btn btn-danger mb-2">Ištrinti</button>
 
                         </div>
         }
@@ -465,10 +476,10 @@ class Ad extends React.Component
                     <br></br>
                   
                     <div>
-                      <b>Kaina: {ad.price}€</b><br></br>
-                      <b>Savininkas: {ad.owner}</b><br></br>
-                      <b>El. paštas: {ad.email}</b><br></br>
-                      <b>Telefono nr.: {ad.phone}</b>
+                      <b>Kaina:</b> {ad.price}€<br></br>
+                      <b>Savininkas:</b> <Link onClick={this.clearAd}to={"/user/" + ad.ownerId} >{ad.owner}</Link><br></br>
+                      <b>El. paštas:</b> {ad.email}<br></br>
+                      <b>Telefono nr.:</b> {ad.phone}
                     </div>
                   </div>
                 </div>

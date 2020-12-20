@@ -16,7 +16,7 @@ class NotAuthorized extends React.Component
     }
     render()
     {
-        
+        document.title = "Neautorizuotas";
         let errorMessage;
         if (this.props.errorMessage)
         {

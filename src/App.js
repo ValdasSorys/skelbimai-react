@@ -3,7 +3,6 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   Redirect
 } from "react-router-dom";
 import { isLoggedIn, Login, Logout, Register} from './auth'
@@ -11,7 +10,6 @@ import {Ads} from './Ads'
 import {Categories} from './Categories'
 import {HomePage} from './HomePage'
 import {LoginForm} from './LoginForm'
-import {UserList} from './UsersAdmin'
 import {UserInfo} from './UserProfile'
 import {Header} from './Header'
 import {Footer} from './Footer'
@@ -76,21 +74,17 @@ class App extends React.Component {
     if (userRole === 2)
     {
       routerElement = <Switch>
-                      <Route path="/ads" component={(props) => (<Ads role = {userRole} {...props}/>)} >
+                      <Route path="/ads" component={(props) => (<Ads showHF={this.showHF} role = {userRole} {...props}/>)} >
                       </Route>
-                      <Route path="/categories" component={(props) => (<Categories {...props}/>)} >
+                      <Route exact path="/categories" component={(props) => (<Categories showHF={this.showHF} {...props}/>)} >
                       </Route>
-                      <Route path="/userslist" component={(props) => (<UserList {...props}/>)} >
-                      </Route>
-                      <Route path="/user" component={(props) => (<UserInfo {...props}/>)} >
+                      <Route path="/user" component={(props) => (<UserInfo showHF={this.showHF} {...props}/>)} >
                       </Route>  
                       <Route exact path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." hideHF={this.hideHF} showHF={this.showHF} {...props}/>)} >
                       </Route>
                       <Route exact path="/403" component={(props) => (<NotAuthorized hideHF={this.hideHF} showHF={this.showHF} {...props}/>)} >
                       </Route>               
-                      <Route exact path="/" component={(props) => (<HomePage {...props}/>)}>
-                      </Route>
-                      <Route exact path="/login" component={(props) => (<LoginForm updateParent={this.showHF} {...props}/>)}>
+                      <Route exact path="/" component={(props) => (<HomePage showHF={this.showHF} {...props}/>)}>
                       </Route>
                       <Route exact path="/logout" component={(props) => (<Logout updateParent={this.updateApp} {...props}/>)}>
                       </Route>
@@ -112,9 +106,9 @@ class App extends React.Component {
     else if (userRole === 1)
     {
                       routerElement = <Switch>
-                      <Route path="/ads" component={(props) => (<Ads role = {userRole} {...props}/>)} >
+                      <Route path="/ads" component={(props) => (<Ads showHF={this.showHF} role = {userRole} {...props}/>)} >
                       </Route>
-                      <Route path="/user" component={(props) => (<UserInfo {...props}/>)} >
+                      <Route path="/user" component={(props) => (<UserInfo showHF={this.showHF} {...props}/>)} >
                       </Route>                      
                       <Route exact path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." hideHF={this.hideHF} showHF={this.showHF} {...props}/>)} >
                       </Route>
@@ -134,10 +128,7 @@ class App extends React.Component {
                       </Route>
                       <Route exact path="/register" component={(props) => (<Register updateApp={this.updateApp} {...props}/>)}>
                       </Route>
-                      <Route path="/categories">
-                      <Redirect to="/403"/>
-                      </Route>
-                      <Route path="/userslist">
+                      <Route exact path="/categories">
                       <Redirect to="/403"/>
                       </Route>
                       <Route path="/">
@@ -148,15 +139,15 @@ class App extends React.Component {
     else
     {
       routerElement = <Switch>
-                      <Route path="/ads" component={(props) => (<Ads role = {userRole} {...props}/>)} >
+                      <Route path="/ads" component={(props) => (<Ads showHF={this.showHF} role = {userRole} {...props}/>)} >
                       </Route>
-                      <Route path="/user" component={(props) => (<UserInfo {...props}/>)} >
+                      <Route path="/user" component={(props) => (<UserInfo showHF={this.showHF} {...props}/>)} >
                       </Route>  
                       <Route exact path="/404" component={(props) => (<NotFound errorMessage="Puslapis nerastas." hideHF={this.hideHF} showHF={this.showHF} {...props}/>)} >
                       </Route>
                       <Route exact path="/403" component={(props) => (<NotAuthorized hideHF={this.hideHF} showHF={this.showHF} {...props}/>)} >
                       </Route>           
-                      <Route exact path="/" component={(props) => (<HomePage {...props}/>)}>
+                      <Route exact path="/" component={(props) => (<HomePage showHF={this.showHF} {...props}/>)}>
                       </Route>
                       <Route exact path="/login" component={(props) => (<LoginForm isAdmin={false} updateParent={this.showHF} updateApp={this.updateApp} {...props}/>)}>
                       </Route>
@@ -175,9 +166,6 @@ class App extends React.Component {
                       <Redirect to="/403" />
                       </Route>
                       <Route path="/">
-                      <Route path="/userslist">
-                      <Redirect to="/403"/>
-                      </Route>
                       <Redirect to="/404" />
                       </Route>
                       </Switch>
@@ -187,18 +175,13 @@ class App extends React.Component {
       header = <Header activeHeader={activeHeaderKey}/>;
       footer = <Footer/>;
     }
-    return (
-      
+    return (        
       <div>
-      <article>    
-      <Router>
           {header}
           <div className="bodypage">
           {routerElement}
           </div>
           {footer}
-      </Router>
-      </article> 
       </div>
     );
   }

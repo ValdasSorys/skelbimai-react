@@ -62,6 +62,7 @@ export class RegistrationForm extends React.Component {
     }
     render()
     {
+      document.title = "Registracija";
       if (this.state.redirect) {
         let redirect = this.state.redirect;
         if (this.state.params)

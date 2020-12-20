@@ -16,7 +16,7 @@ class NotFound extends React.Component
     }
     render()
     {
-        
+        document.title = "Puslapis nerastas";
         let errorMessage;
         if (this.props.errorMessage)
         {

@@ -8,8 +8,13 @@ import {isLoggedIn, loginContext, getToken} from './auth'
 import {API_URL} from './constants'
 import {UserEdit} from './UserEdit'
 import {Card, Button} from 'react-bootstrap'
+import { ConfirmationModal } from './ConfirmationModal';
 export class UserInfo extends React.Component
 {
+    componentDidMount()
+    {
+      this.props.showHF();
+    }
     render()
     {
       document.title = "Vartotojo profilis";
@@ -46,7 +51,8 @@ class User extends React.Component
     constructor(props)
     {
       super(props);
-      this.state = {isLoading: true, id: this.props.match.params.id,  idUser: this.props.ownerId, user: null, userEditModal: null};
+      this.state = {isLoading: true, id: this.props.match.params.id,  idUser: this.props.ownerId, user: null, 
+        userEditModal: null, userDeleteModal: null, userDeleted: false};
     }
     async componentDidMount()
     {
@@ -77,6 +83,7 @@ class User extends React.Component
     {
       this.setState({userEditModal: null});
     }
+    
     update = async (newData) =>
     {
       let token = await getToken();
@@ -105,11 +112,58 @@ class User extends React.Component
         this.setState({userEditModal: null});
       }
     }
+    showDeleteModal = () =>
+    {
+      /*this.state = {isLoading: false, show: true, button1Name: this.props.button1Name, button2Name: this.props.button2Name, 
+            text: this.props.text, header: this.props.header, onButton1Click: this.props.onButton1Click, onButton2Click: this.props.onButton2Click};
+            */
+      this.setState({userDeleteModal: <ConfirmationModal button1Name="Atšaukti" button2Name="Ištrinti" text="Ištrynus, vartotojo atkurti negalima" 
+                      header="Ištrinti vartotoją" onButton1Click={this.delete} onButton2Click={this.hideDeleteModal}/>})
+    }
+    hideDeleteModal = () =>
+    {
+      this.setState({userDeleteModal: null});
+    }
+    delete = async () =>
+    {
+      let token = await getToken();
+      const response = await fetch(API_URL+"users/" + this.state.user.id + "/",
+      {
+        mode: 'cors',
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer " + token
+        }
+      });
+      if (response.status === 200)
+      {
+        this.setState({userDeleted: true, userEditModal: null});
+      }
+      else
+      {
+        this.setState({userEditModal: null});
+      }
+      //this.setState({userDeleteModal: null});
+    }
     render()
     {
       if (this.state.isLoading)
       {
         return <div id="loader"></div>
+      }
+      if (this.state.userDeleted)
+      {
+        return <div className="elementContainer">
+                <div className="container">
+                  <div className="col">
+                    <div className="alert alert-success" role="alert">
+                      Vartotojas pašalintas sėkmingai
+                    </div>
+                  </div>
+                </div>
+              </div> 
+              
       }
       let role = isLoggedIn();
       let isOwner = "";
@@ -123,7 +177,7 @@ class User extends React.Component
       }
       else if (role === 2)
       {
-          buttonDelete = <Button variant="primary">Ištrinti vartotoją</Button>
+          buttonDelete = <Button variant="danger" onClick={this.showDeleteModal}>Ištrinti vartotoją</Button>
       }
 
       let user = this.state.user;
@@ -132,6 +186,7 @@ class User extends React.Component
                   <div className="col">
                     <Card className="mt-4">
                       {this.state.userEditModal}
+                      {this.state.userDeleteModal}
                       <Card.Header>
                         <Card.Title>Profilio peržiūra{isOwner}</Card.Title>                      
                         </Card.Header>
@@ -144,15 +199,15 @@ class User extends React.Component
                           <b>Vardas:</b> {user.name}
                         </Card.Text>
                         <Card.Text>
+                          <b>El. paštas:</b> {user.email}
+                        </Card.Text>
+                        <Card.Text>
                           <b>Telefonas:</b> {user.phone}
                         </Card.Text>
                         <Card.Text>
                           <b>Registracijos data:</b> {user.usersince_date}
                         </Card.Text>
-                        <Card.Text></Card.Text>
-                        <Card.Text>
-                          <b>El. paštas:</b> {user.email}
-                        </Card.Text>
+                        <Card.Text></Card.Text>                        
                         <Card.Text>
                           <b>Rolė:</b> {user.role}
                         </Card.Text>

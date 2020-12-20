@@ -20,7 +20,7 @@ export class UserEdit extends React.Component
           [name]: value
         });
     }
-
+    
     onSubmit = (event) =>
     {
         event.preventDefault();
@@ -43,6 +43,15 @@ export class UserEdit extends React.Component
         }
         this.state.onSubmit(newData);
     }
+
+    onExit = () =>
+    {
+        if (this.state.isLoading)
+        {
+            return;
+        }
+        this.state.onExit();
+    }
     
     render()
     {   
@@ -54,7 +63,7 @@ export class UserEdit extends React.Component
                                 </div>
         }
         
-        return <Modal show={this.state.show} onHide={this.state.onExit} centered>
+        return <Modal show={this.state.show} onHide={this.onExit} centered>
                 <Modal.Header className="border-0" closeButton>
                     <Modal.Title>Profilio redagavimas</Modal.Title>
                     </Modal.Header>

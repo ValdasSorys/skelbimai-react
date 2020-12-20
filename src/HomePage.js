@@ -9,6 +9,7 @@ export class HomePage extends React.Component {
   }
   async componentDidMount()
   {
+    console.log("xD");
     let token = await getToken();
     let token2 = "";
     if (token)
@@ -21,12 +22,15 @@ export class HomePage extends React.Component {
   {
     document.title = "Skelbimai";     
     return (      
-        <div>
-        <h1>Pagrindinis puslapis</h1>
-        <p>Tai yra pagrindinis puslapis</p>
-        {
-          this.state.tokenValue
-        }
+        <div className="elementContainer">
+          <div className="container"><div className="col">
+            <h1>Pagrindinis puslapis</h1>
+              <p>Tai yra pagrindinis puslapis</p>
+              {
+                this.state.tokenValue
+              }
+            </div>
+          </div>
         </div>
     );
   }
