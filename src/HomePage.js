@@ -9,7 +9,6 @@ export class HomePage extends React.Component {
   }
   async componentDidMount()
   {
-    console.log("xD");
     let token = await getToken();
     let token2 = "";
     if (token)

@@ -11,7 +11,6 @@ export class LoginForm extends React.Component {
     {
       super(props);
       this.login = this.login.bind(this);
-      this.logout = this.logout.bind(this);
       let messageReceived = null;
       if (this.props.location && this.props.location.state)
       {
@@ -49,7 +48,12 @@ export class LoginForm extends React.Component {
       {
         let body = await response.json();
         setClient_id(body.client_id);
-        let result = await login(this.props.updateApp, this.props.isAdmin);
+        let isAdmin = false;
+        if (body.role === "admin")
+        {
+          isAdmin = true;
+        }
+        let result = await login(this.props.updateApp, isAdmin);
         if (result !== 200)
         {
           this.setState({error: "Neturite tinkamų privilegijų", isLoading: false});
@@ -63,10 +67,6 @@ export class LoginForm extends React.Component {
       {
         this.setState({error: "Kritinė klaida", isLoading: false});
       }
-    }
-    logout()
-    {
-      this.setState({redirect: "/logout"});
     }
     handleInputChange(event) {
       const target = event.target;

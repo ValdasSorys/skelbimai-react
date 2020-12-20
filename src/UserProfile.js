@@ -144,7 +144,6 @@ class User extends React.Component
       {
         this.setState({userEditModal: null});
       }
-      //this.setState({userDeleteModal: null});
     }
     render()
     {

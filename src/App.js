@@ -96,8 +96,6 @@ class App extends React.Component {
                       </Route>
                       <Route exact path="/register" component={(props) => (<Register updateApp={this.updateApp} {...props}/>)}>
                       </Route>
-                      <Route exact path="/loginAction" component={(props) => (<Login updateApp={this.updateApp} {...props}/>)}>
-                      </Route>
                       <Route path="/">
                       <Redirect to="/404" />
                       </Route>
@@ -123,8 +121,6 @@ class App extends React.Component {
                       <Route exact path="/logout" component={(props) => (<Logout updateParent={this.updateApp} {...props}/>)}>
                       </Route>
                       <Route exact path="/registration" component={(props) => (<RegistrationForm updateParent={this.showHF} {...props}/>)}>
-                      </Route>
-                      <Route exact path="/loginAction" component={(props) => (<Login updateApp={this.updateApp} {...props}/>)}>
                       </Route>
                       <Route exact path="/register" component={(props) => (<Register updateApp={this.updateApp} {...props}/>)}>
                       </Route>
@@ -159,9 +155,7 @@ class App extends React.Component {
                       <Route exact path="/register" component={(props) => (<Register updateApp={this.updateApp} {...props}/>)}>
                       </Route>
                       <Route exact path="/registration" component={(props) => (<RegistrationForm updateParent={this.showHF} {...props}/>)}>
-                      </Route>
-                      <Route exact path="/loginAction" component={(props) => (<Login updateApp={this.updateApp} {...props}/>)}>
-                      </Route>                      
+                      </Route>                  
                       <Route exact path="/categories">
                       <Redirect to="/403" />
                       </Route>

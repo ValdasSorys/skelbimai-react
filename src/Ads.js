@@ -64,17 +64,20 @@ export class Ads extends React.Component
         {
           parseInt(found[0].replace("page", "").replace("&", "").replace("?", "").replace("=", ""));
         }
-        if (this.state.activePage === 1 && this.state.writtenPage !== 1 || this.state.writtenPage === null)
+        if ((this.state.activePage === 1 && this.state.writtenPage !== 1) || this.state.writtenPage === null)
         {
-          this.props.history.replace("/ads?page=1");
+          await this.props.history.replace("/ads?page=1");
         }
-        window.scroll({top: 0, left: 0, behavior: 'smooth' })
-        await this.loadAdsFromAPI();    
+        else
+        {
+          await this.loadAdsFromAPI();  
+        }  
       }   
     }
 
     loadAdsFromAPI = async () =>
     {
+      console.log(this.state.activePage);
         const data = {
         "page": this.state.activePage,
         "limit": 10,
@@ -95,8 +98,6 @@ export class Ads extends React.Component
         if (body.totalCount > 0 && body.ads.length === 0)
         {
             this.props.history.replace("/ads?page=1");
-            await this.setState({activePage: 1, ads: null});
-            await this.loadAdsFromAPI();
         }
         else
         {
@@ -121,9 +122,7 @@ export class Ads extends React.Component
         {
           if (number > 0 && number <= this.state.pageCount)
           {
-              this.props.history.replace("/ads?page=" + number);
-              await this.setState({activePage: number, ads: null});
-              await this.loadAdsFromAPI();
+              await this.props.history.replace("/ads?page=" + number);
           }
           if (moveToTop)
           {
@@ -269,7 +268,6 @@ class Ad extends React.Component
     this.showUpdateAdModal = this.showUpdateAdModal.bind(this);
   }
   async componentDidMount() {
-    window.scroll({top: 0, left: 0, behavior: 'smooth' })
     if (!this.state.ad)
     {
       await this.loadAdFromAPI();
@@ -291,10 +289,6 @@ class Ad extends React.Component
         text: adData.text, 
         categoryId: adData.category, categoryName: adData.categoryname, price: adData.price, email: adData.email, phone: adData.phone};
         this.setState({ad: dataAd});
-        /*this.props.history.replace({
-          pathname: '/ads/' + dataAd.adId,
-          state: {dataAd: dataAd}
-        });*/
       }
       else if (response.status === 404)
       {
@@ -304,8 +298,6 @@ class Ad extends React.Component
   
   tryToDelete = () =>
   {
-    //this.state = {show: true, button1Name: this.props.button1Name, button2Name: this.props.button2Name, 
-    //text: this.props.text, header: this.props.header, onButtonClick: this.props.onButtonClick};
     this.setState({confirmationModal: <ConfirmationModal button1Name="Atšaukti" button2Name="Ištrinti" text="Ištrynus, skelbimo atkurti negalima" header="Ar tikrai norite ištrinti skelbimą?" onButton1Click={this.delete} onButton2Click={this.hideConfirmation}/>})
   }
   hideConfirmation = () =>
@@ -323,7 +315,7 @@ class Ad extends React.Component
   }
   async onAdUpdate(newAdData)
   {    
-    this.props.history.replace({
+    await this.props.history.replace({
       pathname: '/ads/' + newAdData.adId,
       state: {dataAd: newAdData}
     });    
@@ -348,9 +340,9 @@ class Ad extends React.Component
       this.setState({confirmationModal: null});
     }
   }
-  clearAd = () =>
+  clearAd = async () =>
   {
-    this.props.history.replace("/ads/" + this.state.ad.adId);
+    await this.props.history.replace("/ads/" + this.state.ad.adId);
   }
   render()
   {
