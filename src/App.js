@@ -1,11 +1,10 @@
 import React from 'react';
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Redirect
 } from "react-router-dom";
-import { isLoggedIn, Login, Logout, Register} from './auth'
+import { isLoggedIn, Logout, Register} from './auth'
 import {Ads} from './Ads'
 import {Categories} from './Categories'
 import {HomePage} from './HomePage'
