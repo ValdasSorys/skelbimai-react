@@ -56,7 +56,7 @@ class About extends React.Component
               <Modal.Header className="border-0" closeButton>
                 <Modal.Title>Apie</Modal.Title>
               </Modal.Header>
-              <Modal.Body>Papildoma informacija apie skelbimų portalą</Modal.Body>
+              <Modal.Body>Skelbimų portalo savininkas: Valdas Šorys</Modal.Body>
             </Modal>
   }
 }
