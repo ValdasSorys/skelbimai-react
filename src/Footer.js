@@ -1,5 +1,4 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
 import {Modal, Container, Row, Col} from 'react-bootstrap';
 
 export class Footer extends React.Component {
@@ -27,7 +26,7 @@ export class Footer extends React.Component {
           <Row>
             <Col>
               Informacija:<br></br>
-              <a onClick={this.showAboutModal} href="#">Apie portalą</a><br></br>
+              <a onClick={this.showAboutModal} href="/#">Apie portalą</a><br></br>
             </Col>
             <Col>
             <div className="text-center" style={{"marginTop":"60px"}}>
