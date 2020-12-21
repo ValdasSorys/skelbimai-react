@@ -1,3 +1,7 @@
 /*.header {
   font-family: "Sofia", sans-serif;
 }*/
+.header ins
+{
+  font-style: italic;
+}

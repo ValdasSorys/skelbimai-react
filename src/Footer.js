@@ -1,26 +1,63 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
+import {Modal, Container, Row, Col} from 'react-bootstrap';
 
 export class Footer extends React.Component {
+  constructor(props)
+  {
+    super(props);
+    this.state = {aboutModal: null};
+  }
+  showAboutModal = () =>
+  {
+    this.setState({aboutModal: <About onHide={this.hideAboutModal}/>});
+    return;
+  }
+  hideAboutModal = () =>
+  {
+    this.setState({aboutModal: null});
+    return;
+  }
   render()
   {
     return(
-      <footer className="bottom-footer py-4 bg-primary text-white-50">
-        <div className="container">
-            <div style={{"display":"inline-block", "float":"left"}}>
-              Valdo skelbimų portalas<br></br>
-              Valdo skelbimų portalas<br></br>
-              Valdo skelbimų portalas
+      <footer className="bottom-footer py-2 bg-primary text-white-50">
+        {this.state.aboutModal}
+        <Container>
+          <Row>
+            <Col>
+              Informacija:<br></br>
+              <a onClick={this.showAboutModal} href="#">Apie portalą</a><br></br>
+            </Col>
+            <Col>
+            <div className="text-center" style={{"marginTop":"60px"}}>
+              <ins>2020</ins>
             </div>
-            
-            <div style={{"display":"inline-block", "float":"right"}}>
-              <small>Valdo skelbimų portalas</small>
+            </Col>
+            <Col>
+            <div style={{"float":"right"}}>
+              Nuorodos:<br></br>
+              <a style={{"float":"right"}} href="http://google.lt">Google&nbsp;</a><br></br>
+              <a style={{"float":"right"}} href="https://www.bankai.lt/valiutos/valiutu-skaiciuokle">Valiutos&nbsp;</a>
             </div>
-
-            <div className="text-center">
-              <small>Valdo skelbimų portalas</small>
-            </div>
-        </div>
+            </Col>
+          </Row>
+        </Container>
       </footer>
     );
+  }
+}
+
+class About extends React.Component 
+{
+
+  render()
+  {
+    return <Modal show={true} onHide={this.props.onHide} centered>
+              <Modal.Header className="border-0" closeButton>
+                <Modal.Title>Apie</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>Papildoma informacija apie skelbimų portalą</Modal.Body>
+            </Modal>
   }
 }

@@ -40,10 +40,6 @@ export class Ads extends React.Component
         {
           activePageVar = parseInt(found[0].replace("page", "").replace("&", "").replace("?", "").replace("=", ""));
           writtenPageVar = activePageVar;
-          if (activePageVar < 1)
-          {
-            activePageVar = 1;
-          }
         }
         this.state = {activePage: activePageVar, writtenPage: writtenPageVar, pageCount: 1, showFiltering: false, 
           ads: null, role: this.props.role, onlyRouting: onlyRoutingVar};
@@ -53,18 +49,10 @@ export class Ads extends React.Component
     async componentDidMount() {
       this.props.showHF();
       let pathWithoutParams = this.props.location.pathname.split("?")[0];
-
-      
+      console.log(this.props.location.search);
       if (pathWithoutParams === "/ads" || pathWithoutParams === "/ads/")
       {
-        const params = this.props.location.search;
-        const regex = /[?&]page=[0-9]+(&|$)/g;
-        const found = params.match(regex);
-        if (found && found.length > 0)
-        {
-          parseInt(found[0].replace("page", "").replace("&", "").replace("?", "").replace("=", ""));
-        }
-        if ((this.state.activePage === 1 && this.state.writtenPage !== 1) || this.state.writtenPage === null)
+        if ((this.state.activePage !== this.state.writtenPage) || this.state.activePage < 1)
         {
           await this.props.history.replace("/ads?page=1");
         }
@@ -140,107 +128,107 @@ export class Ads extends React.Component
     render()
     {
       document.title = "Skelbimai";
-    let unAllowedRoutes = null;
-    if (isLoggedIn() === 0)
-    {
-      unAllowedRoutes = [];
-      unAllowedRoutes.push(<Route key={0} exact path="/ads/create/">
-                            <Redirect to="/403" />
-                          </Route>);
-    }
-    let match = this.props.match;
-    let adList = null;
-    if (this.state.ads)
-    {
-      adList= [];
-      var i;
-      for (i = 0; i < this.state.ads.length; i++)
+      let unAllowedRoutes = null;
+      if (isLoggedIn() === 0)
       {
-        let keyList = i;
-        adList.push(<Ad key={keyList} data={this.state.ads[keyList]} detailed={false}/>);
+        unAllowedRoutes = [];
+        unAllowedRoutes.push(<Route key={0} exact path="/ads/create/">
+                              <Redirect to="/403" />
+                            </Route>);
       }
-    }
-    let extraButtons = "";
-    if (this.state.role === 1 || this.state.role === 2)
-    {
-      extraButtons = <div className="mb-2">
-                      <Link to="/ads/create">                        
-                        <button type="button" className="btn btn-primary">Kurti skelbimą</button>
-                      </Link>
-                    </div>
-    }
-    return (      
-      <div className="elementContainer">
-      <Switch>
-          
-          <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<Ad detailed = {true} {...props}/>)}>
-          </Route>
-
-          <Route exact path="/ads">
+      let match = this.props.match;
+      let adList = null;
+      if (this.state.ads)
+      {
+        adList= [];
+        var i;
+        for (i = 0; i < this.state.ads.length; i++)
+        {
+          let keyList = i;
+          adList.push(<Ad key={keyList} data={this.state.ads[keyList]} detailed={false}/>);
+        }
+      }
+      let extraButtons = "";
+      if (this.state.role === 1 || this.state.role === 2)
+      {
+        extraButtons = <div className="mb-2">
+                        <Link to="/ads/create">                        
+                          <button type="button" className="btn btn-primary">Kurti skelbimą</button>
+                        </Link>
+                      </div>
+      }
+      return (      
+        <div className="elementContainer">
+        <Switch>
             
-            {this.state.ads ?
-            <div>
+            <Route exact path={`${match.path}/:id(\\d+)`} component={(props) => (<Ad detailed = {true} {...props}/>)}>
+            </Route>
 
-            <Modal show={this.state.showFiltering} onHide={this.handleClose}>
-            <Modal.Header closeButton>
-              <Modal.Title>Modal heading</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
+            <Route exact path="/ads">
+              
+              {this.state.ads ?
+              <div>
 
-            <Form>
-                    <Form.Group controlId="formBasicUsername">
-                      <Form.Label>Vartotojo vardas:</Form.Label>
-                      <Form.Control name="username" type="username" placeholder="Slapyvardis" maxLength="20" required="required" value={this.state.username} onChange={this.handleInputChange} />
-                    </Form.Group>
-                  
-                    <Form.Group controlId="formBasicPassword">
-                      <Form.Label>Slaptažodis</Form.Label>
-                      <Form.Control name="password" type="password" maxLength="50" required="required" placeholder="Slaptažodis" value={this.state.password} onChange={this.handleInputChange}/>          
-                    </Form.Group>
-                    <Button variant="primary" type="submit">
-                      Prisijungti
-                    </Button>
-                    {
-                      this.state.isLoading &&
-                    <div id="smallLoader"></div>
-                    }
-                  </Form>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={this.handleClose}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={this.handleClose}>
-                Save Changes
-              </Button>
-            </Modal.Footer>
-          </Modal>
+              <Modal show={this.state.showFiltering} onHide={this.handleClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Modal heading</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
 
-          
+              <Form>
+                      <Form.Group controlId="formBasicUsername">
+                        <Form.Label>Vartotojo vardas:</Form.Label>
+                        <Form.Control name="username" type="username" placeholder="Slapyvardis" maxLength="20" required="required" value={this.state.username} onChange={this.handleInputChange} />
+                      </Form.Group>
+                    
+                      <Form.Group controlId="formBasicPassword">
+                        <Form.Label>Slaptažodis</Form.Label>
+                        <Form.Control name="password" type="password" maxLength="50" required="required" placeholder="Slaptažodis" value={this.state.password} onChange={this.handleInputChange}/>          
+                      </Form.Group>
+                      <Button variant="primary" type="submit">
+                        Prisijungti
+                      </Button>
+                      {
+                        this.state.isLoading &&
+                      <div id="smallLoader"></div>
+                      }
+                    </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={this.handleClose}>
+                  Close
+                </Button>
+                <Button variant="primary" onClick={this.handleClose}>
+                  Save Changes
+                </Button>
+              </Modal.Footer>
+            </Modal>
 
-          <div > 
-            <div className="container">
-            <div className="row">
-            {extraButtons}   
-            </div></div>     
-            <PagingElement moveToTop={false} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
-                {adList}       
-            <PagingElement moveToTop={true} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/> 
-          </div>
+            
 
-        </div> : <div id="loader"></div>
-          }
-          </Route>
-          {unAllowedRoutes}
-          <Route exact path="/ads/create/" >
-            <CreateAd/>
-          </Route>
-          <Route path="/">
-          <Redirect to="/404" />
-          </Route>
-        </Switch>
-      </div>
-    );
+            <div > 
+              <div className="container">
+              <div className="row">
+              {extraButtons}   
+              </div></div>     
+              <PagingElement moveToTop={false} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/>
+                  {adList}       
+              <PagingElement moveToTop={true} pageCount={this.state.pageCount} whenClicked={this.setPage} page={this.state.activePage}/> 
+            </div>
+
+          </div> : <div id="loader"></div>
+            }
+            </Route>
+            {unAllowedRoutes}
+            <Route exact path="/ads/create/" >
+              <CreateAd/>
+            </Route>
+            <Route path="/">
+            <Redirect to="/404" />
+            </Route>
+          </Switch>
+        </div>
+      );
   }
 }
 

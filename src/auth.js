@@ -30,8 +30,7 @@ export function setClient_id(client_id)
   window.localStorage.setItem("client_id", client_id);
 }
 export async function getToken()
-{
-  
+{  
   if (window.localStorage.getItem("token"))
   {
     if ((new Date().getTime() - window.localStorage.getItem("date"))/1000 > window.localStorage.getItem("expires_in"))
@@ -41,13 +40,16 @@ export async function getToken()
       {
         isAdmin = true;
       }
-      await getTokenFromServer(isAdmin);
+      let response = await getTokenFromServer(isAdmin);
+      if (response !== 200)
+      {
+        window.location.href = '/403'
+      };
       return window.localStorage.getItem("token");
     }
     else
     {
       return window.localStorage.getItem("token");
-      //return "test";
     }
   }
   else

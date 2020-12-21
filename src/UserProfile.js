@@ -114,9 +114,6 @@ class User extends React.Component
     }
     showDeleteModal = () =>
     {
-      /*this.state = {isLoading: false, show: true, button1Name: this.props.button1Name, button2Name: this.props.button2Name, 
-            text: this.props.text, header: this.props.header, onButton1Click: this.props.onButton1Click, onButton2Click: this.props.onButton2Click};
-            */
       this.setState({userDeleteModal: <ConfirmationModal button1Name="Atšaukti" button2Name="Ištrinti" text="Ištrynus, vartotojo atkurti negalima" 
                       header="Ištrinti vartotoją" onButton1Click={this.delete} onButton2Click={this.hideDeleteModal}/>})
     }

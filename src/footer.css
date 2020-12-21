@@ -6,6 +6,16 @@
     width: 100%;
   }
 
-footer {
+/*footer {
   font-family: "Sofia", sans-serif;
+}*/
+.bottom-footer a {
+  color: #FFF;
+}
+.bottom-footer a:hover {
+   color: #00F
+}
+.bottom-footer i
+{
+  text-decoration: underline;
 }

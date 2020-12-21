@@ -308,9 +308,11 @@ class Comment extends React.Component
       }
       else if (role === 2)
       {
-        button2 = <Button style={{"float":"right"}} variant="danger" size="sm" onClick={this.tryToDelete}>
+        button2 = <div><Button style={{"float":"right"}} variant="danger" size="sm" onClick={this.tryToDelete}>
                     Ištrinti
                   </Button>
+                  <div style={{"clear": "both"}}></div>
+                  </div>
         buttonSeparator = null;
       }
       if (parseInt(comment.idOwner) === parseInt(comment.user_id))
