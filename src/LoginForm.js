@@ -143,7 +143,7 @@ export class LoginForm extends React.Component {
           form = <Redirect to="/"/>
       }
       return (
-        <div>
+        <div className="container2">
         {form}
         </div>
       );

@@ -169,7 +169,7 @@ class App extends React.Component {
       footer = <Footer/>;
     }
     return (        
-      <div>
+      <div className="container1">
           {header}
           <div className="bodypage">
           {routerElement}

@@ -7,10 +7,10 @@ export class Footer extends React.Component {
     super(props);
     this.state = {aboutModal: null};
   }
-  showAboutModal = () =>
+  showAboutModal = (event) =>
   {
+    event.preventDefault();
     this.setState({aboutModal: <About onHide={this.hideAboutModal}/>});
-    return;
   }
   hideAboutModal = () =>
   {
